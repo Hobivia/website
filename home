@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hobivia – Hébergements insolites par activité</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --vert-foret:#1B4F46; --beige-sable:#EDE6DA; --terre-cuite:#D07B4E;
+  --glass-bg:rgba(255,255,255,0.12); --glass-brd:rgba(255,255,255,0.35);
+  --shadow:0 8px 30px rgba(0,0,0,0.15);
+}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--beige-sable);color:#222}
+header{backdrop-filter:blur(12px);background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:space-between;padding:12px 20px}
+header img{height:40px}
+header nav a{color:#fff;margin:0 15px;text-decoration:none;font-weight:600}
+h1,h2{font-family:"Space Grotesk",sans-serif;color:var(--vert-foret)}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+.glass{background:var(--glass-bg);border:1px solid var(--glass-brd);backdrop-filter:blur(14px);border-radius:20px;box-shadow:var(--shadow)}
+#map-home{height:400px;border-radius:20px}
+</style>
+</head>
+<body>
+<header>
+  <img src="images/logo-hobivia.png" alt="Hobivia">
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="peche.html">Pêche</a>
+    <a href="#">Randonnée</a>
+    <a href="#">Escalade</a>
+    <a href="#">Surf</a>
+    <a href="#">VTT</a>
+  </nav>
+</header>
+
+<section class="container">
+  <h1>Ton activité, ton hébergement de rêve</h1>
+  <p>Une sélection d’hébergements uniques et design par activité et destination.</p>
+  <div id="map-home" class="glass"></div>
+</section>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const JSON_URL = "data/hobivia-peche.json";
+const mapHome = L.map('map-home').setView([46.6, 2.2], 5.5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapHome);
+
+fetch(JSON_URL)
+  .then(res=>res.json())
+  .then(data=>{
+    data.forEach(l=>{
+      L.marker([l.latitude, l.longitude]).addTo(mapHome)
+        .bindPopup(`<strong>${l.nom}</strong><br>${l.commune}<br><a href="peche.html">Voir les logements pêche</a>`);
+    });
+  });
+</script>
+</body>
+</html>
