@@ -1,36 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hobivia — Accueil</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+/* ===== THEME ===== */
+:root{
+  --vert-foret:#1B4F46;
+  --beige-sable:#EDE6DA;
+  --terre-cuite:#D07B4E;
+  --blanc:#ffffff;
+  --noir:#1e1e1e;
+
+  --glass-bg:rgba(255,255,255,.14);
+  --glass-brd:rgba(255,255,255,.35);
+  --glass-shadow:0 10px 30px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box} html,body{margin:0}
+body{
+  font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  color:var(--noir);
+  background:
+    radial-gradient(1200px 800px at -10% -10%, #d8ece5 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 10%, #dbe9f2 0%, transparent 60%),
+    var(--beige-sable);
+}
+
+/* ===== UTIL ===== */
+.container{max-width:1180px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:"Space Grotesk",sans-serif;color:var(--vert-foret);letter-spacing:.4px}
+h1{font-size:clamp(32px,5vw,56px);line-height:1.04;margin:0}
+h2{font-size:clamp(22px,3vw,32px);margin:0 0 10px}
+p{line-height:1.65;margin:0}
+a{text-decoration:none;color:inherit}
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  background:var(--terre-cuite);color:var(--blanc);
+  padding:.8rem 1.2rem;border-radius:999px;font-weight:700;
+  box-shadow:var(--glass-shadow);transition:transform .25s ease, background .25s ease
+}
+.btn:hover{transform:translateY(-2px);background:var(--vert-foret)}
+
+/* ===== GLASS ===== */
+.glass{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-brd);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:var(--glass-shadow);
+  border-radius:22px;
+}
+
+/* ===== HEADER ===== */
+.header{
+  position:sticky;top:0;z-index:1000;
+  margin-top:8px;
+}
+.header .bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;
+}
+.brand{display:flex;align-items:center;gap:.8rem}
+.brand img{height:44px;width:auto;display:block}
+nav{display:flex;gap:16px;align-items:center}
+nav a{font-weight:700;color:#f5fbf9;opacity:.95}
+nav a:hover{opacity:1}
+
+/* ===== HERO ===== */
+.hero{
+  margin:14px 0 10px;
+  position:relative;overflow:hidden;border-radius:26px;color:#f0fbf7;
+  min-height:64vh;display:grid;place-items:center;text-align:center;
+}
+.hero::before{
+  content:""; position:absolute; inset:0;
+  background:url('https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+  filter:brightness(.65) saturate(1.05);
+}
+.hero .inner{position:relative;z-index:1;padding:2rem}
+.hero p{color:#e5f4ef;max-width:760px;margin:16px auto 24px}
+
+/* ===== SECTION ===== */
+.section{padding:40px 0}
+.lead{font-size:1.05rem;color:#274a42}
+
+/* ===== MAP ===== */
+#map-home{
+  height:520px;border-radius:20px;overflow:hidden;
+}
+.filters{
+  margin-bottom:10px;display:flex;gap:10px;flex-wrap:wrap
+}
+.input, .select{
+  border:1px solid var(--glass-brd);
+  background:rgba(255,255,255,.35);
+  color:#0f2f2a;
+  padding:.7rem .9rem;border-radius:14px;
+}
+.input{min-width:260px}
+
+/* Marker style */
+.hobi-marker{
+  width:22px;height:22px;border-radius:50%;
+  border:2.5px solid #ffffffcc;
+  background:linear-gradient(180deg,#2f7e72,#1B4F46);
+  box-shadow:0 6px 14px rgba(0,0,0,.25);
+  transform:scale(1);transition:transform .15s ease
+}
+.hobi-marker.is-hover{transform:scale(1.35)}
+
+/* ===== REVEAL ===== */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ===== FOOTER ===== */
+footer{padding:28px 0 48px}
+.footer-note{color:#16433a}
+</style>
+</head>
 <body>
-<header>
-  <img src="images/logo-hobivia.png" alt="Hobivia">
-  <nav>
-    <a href="index.html">Accueil</a>
-    <a href="peche.html">Pêche</a>
-    <a href="#">Randonnée</a>
-    <a href="#">Escalade</a>
-    <a href="#">Surf</a>
-    <a href="#">VTT</a>
-  </nav>
+
+<!-- ===== HEADER ===== -->
+<header class="header container">
+  <div class="bar glass">
+    <a class="brand" href="index.html" aria-label="Accueil Hobivia">
+      <!-- Mets ton fichier dans /images/logo-hobivia.png -->
+      <img src="images/logo-hobivia.png" alt="Hobivia">
+    </a>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="peche.html">Pêche</a>
+      <a href="#">Randonnée</a>
+      <a href="#">Escalade</a>
+      <a href="#">Surf</a>
+      <a href="#">VTT</a>
+    </nav>
+  </div>
 </header>
 
+<!-- ===== HERO ===== -->
 <section class="container">
-  <h1>Ton activité, ton hébergement de rêve</h1>
-  <p>Une sélection d’hébergements uniques et design par activité et destination.</p>
-  <div id="map-home" class="glass"></div>
+  <div class="hero">
+    <div class="inner">
+      <h1 class="reveal">Ton activité, ton hébergement de rêve</h1>
+      <p class="reveal">Une sélection d’hébergements uniques et d’architectures inspirantes, pensés pour tes passions.</p>
+      <a class="btn reveal" href="peche.html">Voir les logements Pêche</a>
+    </div>
+  </div>
 </section>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-const JSON_URL = "https://raw.githubusercontent.com/Hobivia/website/refs/heads/main/data/hobivia-peche.json";
-const mapHome = L.map('map-home').setView([46.6, 2.2], 5.5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapHome);
+<!-- ===== EXPLORE MAP ===== -->
+<section class="section container">
+  <h2>Explore sur la carte</h2>
+  <p class="lead">Repère en un coup d’œil où se trouvent nos logements de pêche. Clique pour voir la fiche.</p>
+  <div class="filters">
+    <input id="q" class="input glass" placeholder="Mot‑clé (ex: lac, cabane…)" />
+    <select id="f-destination" class="select glass">
+      <option value="">Toutes destinations</option>
+      <option>France</option>
+    </select>
+  </div>
+  <div id="map-home" class="glass reveal"></div>
+</section>
 
-fetch(JSON_URL)
-  .then(res=>res.json())
-  .then(data=>{
-    data.forEach(l=>{
-      L.marker([l.latitude, l.longitude]).addTo(mapHome)
-        .bindPopup(`<strong>${l.nom}</strong><br>${l.commune}<br><a href="peche.html">Voir les logements pêche</a>`);
-    });
+<!-- ===== FOOTER ===== -->
+<footer class="container">
+  <div class="glass" style="padding:18px">
+    <p class="footer-note">© Hobivia — hébergements de passions. <a class="btn" style="margin-left:10px" href="peche.html">Explorer Pêche</a></p>
+  </div>
+</footer>
+
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+/* ========= CONFIG ========= */
+// Pointe sur le RAW GitHub pour éviter tout problème de chemin
+const JSON_URL = "https://raw.githubusercontent.com/Hobivia/website/refs/heads/main/data/hobivia-peche.json";
+
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+/* ========= MAP ========= */
+const map = L.map('map-home',{scrollWheelZoom:true}).setView([46.6,2.2], 5.5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(map);
+
+let all = [];
+let markers = [];
+
+function markerFor(l){
+  return L.marker([l.latitude, l.longitude], {
+    icon: L.divIcon({className:'hobi-marker'})
+  }).bindPopup(`
+    <div style="min-width:220px">
+      <strong>${l.nom}</strong><br>
+      <small>${l.commune || '—'}</small><br>
+      <a class="btn" style="margin-top:8px" href="logement.html?id=${l._id}" target="_blank" rel="noopener">Voir</a>
+    </div>
+  `);
+}
+
+function render(){
+  // clear
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+
+  const q = $('#q').value?.toLowerCase() || "";
+  const dest = $('#f-destination').value;
+
+  const list = all.filter(l => {
+    const txt = (l.nom + " " + (l.commune||"") + " " + (l.type||"")).toLowerCase();
+    const okQ = !q || txt.includes(q);
+    const okD = !dest || dest === (l.destination || "France");
+    return okQ && okD;
   });
+
+  list.forEach(l => {
+    const m = markerFor(l).addTo(map);
+    m.on('mouseover', ()=> m._icon.classList.add('is-hover'));
+    m.on('mouseout',  ()=> m._icon.classList.remove('is-hover'));
+    markers.push(m);
+  });
+
+  if(list.length){
+    const b = L.latLngBounds(list.map(l=>[l.latitude,l.longitude]));
+    map.fitBounds(b.pad(0.2));
+  }
+}
+
+/* ========= LOAD DATA ========= */
+fetch(JSON_URL)
+  .then(r => {
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    return r.json();
+  })
+  .then(data => {
+    all = (data || []).map((x,i)=>({...x, _id:i+1, destination:"France"}));
+    render();
+  })
+  .catch(err => {
+    console.error("Erreur JSON:", err);
+    alert("Impossible de charger les logements (voir console).");
+  });
+
+/* ========= UI ========= */
+$('#q').addEventListener('input', render);
+$('#f-destination').addEventListener('change', render);
+
+/* ========= REVEAL ========= */
+const obs = new IntersectionObserver((ents)=>{
+  ents.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:.15});
+$$('.reveal').forEach(el=>obs.observe(el));
 </script>
 </body>
 </html>
