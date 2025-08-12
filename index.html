@@ -618,26 +618,3 @@ $('#contact-form').addEventListener('submit', e=>{
   $('#contact-ok').style.display='block';
   e.target.reset();
 });
-
-/* =================== SIMPLE REVEAL ON SCROLL =================== */
-const obs = new IntersectionObserver((entries)=>{
-  entries.forEach(ent=>{ if(ent.isIntersecting) ent.target.classList.add('in'); });
-},{threshold:.15});
-$$('.reveal').forEach(el=>obs.observe(el));
-
-/* =================== MOBILE: toggle LIST view =================== */
-function checkMobile(){
-  const btn = $('#toggle-mobile-list');
-  if(window.innerWidth < 980){ btn.style.display='inline-flex'; } else { btn.style.display='none'; }
-}
-checkMobile();
-window.addEventListener('resize', checkMobile);
-
-let showList = true;
-$('#toggle-mobile-list').addEventListener('click', ()=>{
-  showList = !showList;
-  $('#listing').style.display = showList ? 'block' : 'none';
-});
-</script>
-</body>
-</html>
