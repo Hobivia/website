@@ -120,7 +120,7 @@ a{text-decoration:none;color:inherit}
 .hero h1{color:#f4fbf9;text-shadow:0 10px 30px rgba(0,0,0,.35)}
 .hero p{color:#e8f4f1;margin:14px auto 26px;max-width:720px}
 
-/* Wavy separators */
+/* WAVES */
 .waves{display:block;width:100%;height:90px}
 .section{padding:56px 0}
 .section-header{display:flex;align-items:end;justify-content:space-between;margin-bottom:18px}
@@ -163,27 +163,6 @@ a{text-decoration:none;color:inherit}
   display:grid;place-items:center;background:rgba(255,255,255,.25);border:1px solid var(--glass-brd)
 }
 
-/* LIST + MAP (PÊCHE) */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:980px){.split{grid-template-columns:1fr}}
-#map-peche{height:560px;border-radius:20px;overflow:hidden}
-.listing{max-height:560px;overflow:auto;padding-right:4px}
-.card-logement{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;padding:12px}
-.card-logement img{width:120px;height:90px;object-fit:cover;border-radius:12px}
-.card-logement.active{outline:2px solid var(--terre-cuite)}
-.badges{display:flex;gap:8px;margin-top:6px}
-.badge{background:rgba(255,255,255,.35);padding:.25rem .5rem;border-radius:999px;font-size:.85rem}
-
-/* Custom Leaflet marker via divIcon */
-.hobi-marker{
-  width:22px;height:22px;border-radius:50%;
-  border:2.5px solid #ffffffcc;
-  background:linear-gradient(180deg,#2f7e72,#1B4F46);
-  box-shadow:0 6px 14px rgba(0,0,0,.25);
-  transform:scale(1);transition:transform .15s ease
-}
-.hobi-marker.is-hover{transform:scale(1.35)}
-
 /* FOOTER + CONTACT */
 footer{margin-top:28px;padding:26px 0 80px}
 .footer-top{display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
@@ -199,29 +178,6 @@ input, select, textarea{
 }
 textarea{min-height:120px;resize:vertical}
 .footer-note{margin-top:14px;color:#e9f3f0}
-
-/* AUTO-SCROLL GALLERY */
-.gallery-wrap{margin-top:26px}
-.scroller{
-  overflow:hidden;border-radius:18px
-}
-.scroller .track{
-  display:flex;gap:10px;align-items:center;
-  animation:scrollX 35s linear infinite;
-  padding:6px
-}
-.scroller:hover .track{animation-play-state:paused}
-.scroller img{
-  height:160px;width:auto;border-radius:14px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.12)
-}
-@keyframes scrollX{
-  from{transform:translateX(0)}
-  to{transform:translateX(-50%)}
-}
-
-/* Animations on scroll (simple) */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease}
-.reveal.in{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -230,7 +186,7 @@ textarea{min-height:120px;resize:vertical}
 <div class="navbar container">
   <div class="wrap glass">
     <a class="brand" href="#home" aria-label="Accueil Hobivia">
-      <img src="images/logo-hobivia.png" alt="Hobivia" />
+      <img src="logo-hobivia.png" alt="Hobivia" />
     </a>
 
     <ul class="menu">
@@ -245,7 +201,6 @@ textarea{min-height:120px;resize:vertical}
         </ul>
       </li>
 
-      <!-- ▼▼▼ Seule modification : Destinations = Suisse + Italie ▼▼▼ -->
       <li class="dropdown">
         <button class="glass">Destinations ▾</button>
         <ul class="glass">
@@ -253,7 +208,6 @@ textarea{min-height:120px;resize:vertical}
           <li><a href="#home">Italie</a></li>
         </ul>
       </li>
-      <!-- ▲▲▲ -->
 
       <li class="header-search">
         <input class="search-input" id="q-global" placeholder="Rechercher (ex: Norvège, cabane…)" />
@@ -267,35 +221,19 @@ textarea{min-height:120px;resize:vertical}
 <section id="home" class="container">
   <div class="hero">
     <div class="content">
-      <h1 class="reveal">Ton activité, ton hébergement de rêve</h1>
-      <p class="reveal">Une sélection soignée de logements uniques et d’architectures inspirantes, pensés pour tes passions.</p>
-      <a class="btn reveal" href="#map-home">Explorer maintenant</a>
+      <h1>Ton activité, ton hébergement de rêve</h1>
+      <p>Une sélection soignée de logements uniques et d’architectures inspirantes, pensés pour tes passions.</p>
+      <a class="btn" href="#map-home">Explorer maintenant</a>
     </div>
   </div>
 </section>
 
-<!-- WAVES -->
-<svg class="waves" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-  <path fill="#EDE6DA" d="M0,64L60,53.3C120,43,240,21,360,10.7C480,0,600,0,720,16C840,32,960,64,1080,80C1200,96,1320,96,1380,96L1440,96L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"/>
-</svg>
-
-<!-- HOME MAP -->
+<!-- MAP -->
 <section class="section container map-block">
   <div class="section-header">
     <h2>Explore sur la carte</h2>
   </div>
-  <div class="filters">
-    <input class="search-input glass" id="q-home" placeholder="Mot-clé (ex: lac, cabane, Norvège…)" />
-    <select id="f-activite" class="glass">
-      <option value="">Toutes activités</option>
-      <option>Pêche</option><option>Randonnée</option><option>Escalade</option><option>Surf</option><option>VTT</option>
-    </select>
-    <select id="f-destination" class="glass">
-      <option value="">Toutes destinations</option>
-      <option>France</option><option>Finlande</option><option>Norvège</option><option>Italie</option><option>Espagne</option>
-    </select>
-  </div>
-  <div id="map-home" class="glass reveal"></div>
+  <div id="map-home" class="glass"></div>
 </section>
 
 <!-- ACTIVITÉS -->
@@ -304,16 +242,16 @@ textarea{min-height:120px;resize:vertical}
     <h2>Par activité</h2>
   </div>
   <div class="grid grid-3">
-    <a class="card glass reveal" href="#peche" title="Pêche">
-      <img alt="" src="https://images.unsplash.com/photo-1469594292607-7bd90f8d3ba4?q=80&w=1400&auto=format&fit=crop" />
+    <a class="card glass" href="#peche" title="Pêche">
+      <img src="https://images.unsplash.com/photo-1469594292607-7bd90f8d3ba4?q=80&w=1400&auto=format&fit=crop" />
       <span class="label">Pêche</span>
     </a>
-    <div class="card glass reveal">
-      <img alt="" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop" />
+    <div class="card glass">
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop" />
       <span class="label">Randonnée</span>
     </div>
-    <div class="card glass reveal">
-      <img alt="" src="https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?q=80&w=1400&auto=format&fit=crop" />
+    <div class="card glass">
+      <img src="https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?q=80&w=1400&auto=format&fit=crop" />
       <span class="label">Escalade</span>
     </div>
   </div>
@@ -323,8 +261,8 @@ textarea{min-height:120px;resize:vertical}
 <section class="section container">
   <div class="section-header"><h2>Ils ont voyagé avec Hobivia</h2></div>
   <div class="testis">
-    <div class="testi glass reveal"><h3>“Spot parfait au lever du jour”</h3><p>Une cabane au bord d’un lac, un ponton privé… j’ai pêché au petit matin, c’était magique.</p></div>
-    <div class="testi glass reveal"><h3>“Design + nature : combo gagnant”</h3><p>Lodge ultra propre, architecture canon, tout près d’une rivière à truite. Je recommande.</p></div>
+    <div class="testi glass"><h3>“Spot parfait au lever du jour”</h3><p>Une cabane au bord d’un lac, un ponton privé… j’ai pêché au petit matin, c’était magique.</p></div>
+    <div class="testi glass"><h3>“Design + nature : combo gagnant”</h3><p>Lodge ultra propre, architecture canon, tout près d’une rivière à truite. Je recommande.</p></div>
   </div>
 </section>
 
@@ -332,22 +270,22 @@ textarea{min-height:120px;resize:vertical}
 <section class="section container">
   <div class="section-header"><h2>Nos critères de sélection</h2></div>
   <div class="criteria">
-    <div class="item glass reveal">
+    <div class="item glass">
       <div class="icon">🏡</div>
       <h3>Architecture</h3>
       <p>Des lieux au design soigné, intégrés dans leur environnement.</p>
     </div>
-    <div class="item glass reveal">
+    <div class="item glass">
       <div class="icon">🧭</div>
       <h3>Emplacement</h3>
       <p>Accès simple à l’activité : lac, rivière, océan ou montagne.</p>
     </div>
-    <div class="item glass reveal">
+    <div class="item glass">
       <div class="icon">✨</div>
       <h3>Expérience</h3>
       <p>Une immersion réelle : calme, nature, sensations et confort.</p>
     </div>
-    <div class="item glass reveal">
+    <div class="item glass">
       <div class="icon">🌿</div>
       <h3>Qualité</h3>
       <p>Hébergements vérifiés et entretenus, hôtes réactifs.</p>
@@ -355,266 +293,46 @@ textarea{min-height:120px;resize:vertical}
   </div>
 </section>
 
-<!-- GALLERY (HOME) -->
-<section class="container gallery-wrap">
+<!-- GALLERY -->
+<section class="container">
   <div class="scroller glass">
     <div class="track">
-      <!-- duplique pour boucle infinie -->
-      <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1523419409543-343fc69d2ce0?q=80&w=1200&auto=format&fit=crop" alt="">
-      <!-- repeat -->
-      <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop" alt="">
-      <img src="https://images.unsplash.com/photo-1523419409543-343fc69d2ce0?q=80&w=1200&auto=format&fit=crop" alt="">
+      <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=1200&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1200&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop">
+      <img src="https://images.unsplash.com/photo-1523419409543-343fc69d2ce0?q=80&w=1200&auto=format&fit=crop">
     </div>
   </div>
 </section>
 
-<!-- FOOTER + CONTACT -->
+<!-- FOOTER -->
 <footer class="container">
   <div class="footer-top glass">
     <div>
-      <h3 style="color:#f0fbf7">Hobivia</h3>
+      <h3>Hobivia</h3>
       <p class="footer-note">Le meilleur des hébergements de passions. Trouve un lieu pensé pour ce que tu aimes faire.</p>
-      <div class="footer-links">
-        <div>
-          <strong>Navigation</strong><br>
-          <a href="#home">Accueil</a><br>
-          <a href="#peche">Pêche</a><br>
-          <a href="#home">Destinations</a>
-        </div>
-        <div>
-          <strong>Réseaux</strong><br>
-          <a href="#">Instagram</a><br>
-          <a href="#">TikTok</a><br>
-          <a href="#">YouTube</a>
-        </div>
-        <div>
-          <strong>Légal</strong><br>
-          <a href="#">Mentions</a><br>
-          <a href="#">CGU</a><br>
-          <a href="#">Presse</a>
-        </div>
-      </div>
     </div>
     <div>
-      <h3 style="color:#f0fbf7">Contact</h3>
-      <form id="contact-form">
+      <h3>Contact</h3>
+      <form>
         <div class="field">
-          <label for="c-name">Nom</label>
-          <input id="c-name" required placeholder="Votre nom" />
+          <label>Nom</label>
+          <input required placeholder="Votre nom" />
         </div>
         <div class="field">
-          <label for="c-email">Email</label>
-          <input id="c-email" type="email" required placeholder="vous@exemple.com" />
+          <label>Email</label>
+          <input type="email" required placeholder="vous@exemple.com" />
         </div>
         <div class="field">
-          <label for="c-msg">Message</label>
-          <textarea id="c-msg" required placeholder="Votre message…"></textarea>
+          <label>Message</label>
+          <textarea required placeholder="Votre message…"></textarea>
         </div>
         <button class="btn" type="submit">Envoyer</button>
       </form>
-      <p id="contact-ok" style="display:none;margin-top:10px;color:#e8f6f3">Merci ! Votre message a été envoyé (démo).</p>
     </div>
   </div>
 </footer>
 
-<!-- ===================== PAGE ACTIVITÉ : PÊCHE ===================== -->
-<section id="peche" class="section container">
-  <div class="section-header">
-    <h2>Pêche – logements design</h2>
-  </div>
-
-  <!-- outils -->
-  <div class="glass" style="padding:12px; margin-bottom:12px; display:flex; gap:8px; flex-wrap:wrap">
-    <input id="q-peche" class="search-input" placeholder="Rechercher un logement (ex: lac, Finlande…)" />
-    <select id="f-peche-dest" class="glass">
-      <option value="">Toutes destinations</option>
-      <option>France</option><option>Finlande</option><option>Norvège</option><option>Italie</option><option>Espagne</option>
-    </select>
-    <select id="f-peche-budget" class="glass">
-      <option value="">Tous budgets</option>
-      <option value="€">€</option>
-      <option value="€€">€€</option>
-      <option value="€€€">€€€</option>
-    </select>
-    <button id="toggle-mobile-list" class="btn" style="margin-left:auto; display:none">Afficher la liste</button>
-  </div>
-
-  <div class="split">
-    <!-- LISTE -->
-    <div class="listing glass" id="listing"></div>
-    <!-- MAP -->
-    <div class="glass" style="padding:8px">
-      <div id="map-peche"></div>
-    </div>
-  </div>
-
-  <!-- Galerie auto en bas de page activité -->
-  <div class="gallery-wrap">
-    <div class="scroller glass">
-      <div class="track">
-        <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1523419409543-343fc69d2ce0?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1549880181-56a44cf4a9a7?q=80&w=1200&auto=format&fit=crop" alt="">
-        <!-- repeat -->
-        <img src="https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1523419409543-343fc69d2ce0?q=80&w=1200&auto=format&fit=crop" alt="">
-        <img src="https://images.unsplash.com/photo-1549880181-56a44cf4a9a7?q=80&w=1200&auto=format&fit=crop" alt="">
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Leaflet -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-/* =================== DONNÉES FICTIVES =================== */
-const logements = [
-  {id:1, nom:"Cabane du Lac", lat:44.85, lng:-0.57, activite:"Pêche", destination:"France", budget:"€€", photo:"https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop", noteDesign:5, noteLoc:5, tags:["lac","cabane","ponton"]},
-  {id:2, nom:"Lodge Scandinave", lat:60.17, lng:24.94, activite:"Pêche", destination:"Finlande", budget:"€€€", photo:"https://images.unsplash.com/photo-1523413651479-597eb2da0ad6?q=80&w=1200&auto=format&fit=crop", noteDesign:4, noteLoc:5, tags:["nord","bois","sauna"]},
-  {id:3, nom:"Tiny House Rivière", lat:45.76, lng:4.84, activite:"Pêche", destination:"France", budget:"€", photo:"https://images.unsplash.com/photo-1476041800959-2f6bb412c8ce?q=80&w=1200&auto=format&fit=crop", noteDesign:4, noteLoc:4, tags:["rivière","tiny"]},
-  {id:4, nom:"Cabane Flottante", lat:48.86, lng:2.33, activite:"Pêche", destination:"France", budget:"€€", photo:"https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1200&auto=format&fit=crop", noteDesign:5, noteLoc:3, tags:["flottante","urbain"]},
-  {id:5, nom:"Refuge du Fjord", lat:60.39, lng:5.32, activite:"Pêche", destination:"Norvège", budget:"€€€", photo:"https://images.unsplash.com/photo-1523419409543-343fc69d2ce0?q=80&w=1200&auto=format&fit=crop", noteDesign:5, noteLoc:5, tags:["fjord","nord","bateau"]},
-  {id:6, nom:"Maison sur Pilotis", lat:45.44, lng:12.33, activite:"Pêche", destination:"Italie", budget:"€€", photo:"https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?q=80&w=1200&auto=format&fit=crop", noteDesign:4, noteLoc:4, tags:["pilotis","lagune"]},
-  {id:7, nom:"Cortijo del Lago", lat:43.26, lng:-2.93, activite:"Pêche", destination:"Espagne", budget:"€", photo:"https://images.unsplash.com/photo-1549880181-56a44cf4a9a7?q=80&w=1200&auto=format&fit=crop", noteDesign:3, noteLoc:4, tags:["lac","sud"]},
-  {id:8, nom:"Cabin Boreal", lat:63.43, lng:10.39, activite:"Pêche", destination:"Norvège", budget:"€€€", photo:"https://images.unsplash.com/photo-1499696010180-025ef6e1a8f8?q=80&w=1200&auto=format&fit=crop", noteDesign:5, noteLoc:5, tags:["aurora","bois"]}
-];
-
-/* =================== UTILITAIRES =================== */
-const $ = s=>document.querySelector(s);
-const $$ = s=>document.querySelectorAll(s);
-
-function matchesQuery(l, q){
-  if(!q) return true;
-  const txt = (l.nom+" "+l.activite+" "+l.destination+" "+l.tags.join(" ")).toLowerCase();
-  return txt.includes(q.toLowerCase());
-}
-function matchesSelect(v, val){ return !val || v===val; }
-
-/* =================== LEAFLET HOME =================== */
-const mapHome = L.map('map-home',{scrollWheelZoom:true}).setView([50,7], 4.4);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapHome);
-
-const Marker = (l)=> L.marker([l.lat,l.lng],{
-  icon:L.divIcon({className:"hobi-marker"})
-}).bindPopup(`
-  <div style="min-width:220px">
-    <img src="${l.photo}" alt="" style="width:100%;height:120px;object-fit:cover;border-radius:10px;margin-bottom:8px">
-    <strong>${l.nom}</strong><br>
-    <small>${l.destination} • ${l.activite} • ${l.budget}</small><br>
-    <a class="btn" style="margin-top:8px" href="#peche">Voir la fiche</a>
-  </div>
-`);
-
-let homeMarkers = [];
-function renderHome(){
-  homeMarkers.forEach(m=>mapHome.removeLayer(m)); homeMarkers=[];
-  const q = $('#q-home').value.trim();
-  const a = $('#f-activite').value; const d = $('#f-destination').value;
-  const list = logements.filter(l=>matchesQuery(l,q)&&matchesSelect(l.activite,a)&&matchesSelect(l.destination,d));
-  list.forEach(l=>{
-    const m = Marker(l).addTo(mapHome);
-    m.on('mouseover', ()=> m._icon.classList.add('is-hover'));
-    m.on('mouseout',  ()=> m._icon.classList.remove('is-hover'));
-    homeMarkers.push(m);
-  });
-  if(list.length){
-    const bounds = L.latLngBounds(list.map(l=>[l.lat,l.lng]));
-    mapHome.fitBounds(bounds.pad(0.2));
-  }
-}
-$('#q-home').addEventListener('input', renderHome);
-$('#f-activite').addEventListener('change', renderHome);
-$('#f-destination').addEventListener('change', renderHome);
-renderHome();
-
-/* =================== PAGE PÊCHE : LISTE + CARTE =================== */
-const mapPeche = L.map('map-peche',{scrollWheelZoom:true}).setView([50,7], 4.5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(mapPeche);
-const listing = $('#listing');
-
-let pecheMarkers = new Map();
-
-function cardTemplate(l){
-  return `
-    <div class="card-logement glass" data-id="${l.id}">
-      <img src="${l.photo}" alt="">
-      <div>
-        <h3 style="margin:0 0 6px">${l.nom}</h3>
-        <div class="badges">
-          <span class="badge">Design ${l.noteDesign}/5</span>
-          <span class="badge">Localisation ${l.noteLoc}/5</span>
-          <span class="badge">${l.destination}</span>
-          <span class="badge">${l.budget}</span>
-        </div>
-        <p style="margin:.4rem 0 0;color:#10443a">${l.tags.join(" • ")}</p>
-      </div>
-    </div>`;
-}
-
-function renderPeche(){
-  listing.innerHTML = "";
-  pecheMarkers.forEach(m=>mapPeche.removeLayer(m)); pecheMarkers.clear();
-
-  const q = $('#q-peche').value.trim();
-  const dest = $('#f-peche-dest').value;
-  const budg = $('#f-peche-budget').value;
-
-  const list = logements
-    .filter(l=>l.activite==="Pêche")
-    .filter(l=>matchesQuery(l,q))
-    .filter(l=>matchesSelect(l.destination,dest))
-    .filter(l=>matchesSelect(l.budget,budg));
-
-  list.forEach(l=>{
-    listing.insertAdjacentHTML('beforeend', cardTemplate(l));
-    const m = L.marker([l.lat,l.lng],{icon:L.divIcon({className:"hobi-marker"})})
-      .addTo(mapPeche).bindPopup(`<strong>${l.nom}</strong><br><small>${l.destination} • ${l.budget}</small>`);
-    pecheMarkers.set(l.id, m);
-  });
-
-  // sync interactions
-  $$('#listing .card-logement').forEach(el=>{
-    const id = Number(el.getAttribute('data-id'));
-    const m = pecheMarkers.get(id);
-    el.addEventListener('mouseenter', ()=>{ if(m){ m.openPopup(); m._icon.classList.add('is-hover'); mapPeche.panTo(m.getLatLng(),{animate:true}); }});
-    el.addEventListener('mouseleave', ()=>{ if(m){ m._icon.classList.remove('is-hover'); }});
-    el.addEventListener('click', ()=>{ if(m){ m.openPopup(); } $$('#listing .card-logement').forEach(x=>x.classList.remove('active')); el.classList.add('active'); });
-    if(m){
-      m.on('click', ()=>{ $$('#listing .card-logement').forEach(x=>x.classList.remove('active')); el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'}); });
-      m.on('mouseover', ()=> m._icon.classList.add('is-hover'));
-      m.on('mouseout',  ()=> m._icon.classList.remove('is-hover'));
-    }
-  });
-
-  if(list.length){
-    const bounds = L.latLngBounds(list.map(l=>[l.lat,l.lng]));
-    mapPeche.fitBounds(bounds.pad(0.2));
-  }
-}
-$('#q-peche').addEventListener('input', renderPeche);
-$('#f-peche-dest').addEventListener('change', renderPeche);
-$('#f-peche-budget').addEventListener('change', renderPeche);
-renderPeche();
-
-/* =================== GLOBAL SEARCH SHORTCUT =================== */
-$('#q-global').addEventListener('keydown', e=>{
-  if(e.key==='Enter'){ location.hash = '#peche'; $('#q-peche').value = e.target.value; renderPeche(); }
-});
-
-/* =================== CONTACT (DEMO) =================== */
-$('#contact-form').addEventListener('submit', e=>{
-  e.preventDefault();
-  $('#contact-ok').style.display='block';
-  e.target.reset();
-});
+</body>
+</html>
