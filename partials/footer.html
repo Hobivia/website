@@ -1,0 +1,58 @@
+<footer class="container">
+  <div class="footer-top glass">
+    <div>
+      <h3>Hobivia</h3>
+      <p class="footer-note">Le meilleur des hébergements de passions. Trouve un lieu pensé pour ce que tu aimes faire.</p>
+      <div class="footer-links">
+        <div>
+          <strong>Pages</strong><br>
+          <a href="index.html">Accueil</a><br>
+          <a href="peche.html">Pêche</a><br>
+          <a href="destinations.html">Destinations</a><br>
+          <a href="logement.html?id=1">Logement</a>
+        </div>
+        <div>
+          <strong>Réseaux</strong><br>
+          <a href="#">Instagram</a><br>
+          <a href="#">TikTok</a><br>
+          <a href="#">YouTube</a>
+        </div>
+        <div>
+          <strong>Légal</strong><br>
+          <a href="#">Mentions</a><br>
+          <a href="#">CGU</a><br>
+          <a href="#">Presse</a>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <form id="contact-form">
+        <div class="field"><label>Nom</label><input required placeholder="Votre nom" /></div>
+        <div class="field"><label>Email</label><input type="email" required placeholder="vous@exemple.com" /></div>
+        <div class="field"><label>Message</label><textarea required placeholder="Votre message…"></textarea></div>
+        <button class="btn" type="submit">Envoyer</button>
+      </form>
+      <p id="contact-ok" style="display:none;margin-top:10px;color:#0b2f2a">Merci ! Votre message a bien été envoyé (démo).</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+footer{margin-top:28px;padding:28px 0 60px}
+.footer-top{display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
+@media(max-width:980px){.footer-top{grid-template-columns:1fr}}
+.footer-top h3, .footer-note, footer a, label{color:#0b2f2a}
+.footer-links{display:grid;gap:8px;grid-template-columns:repeat(3,1fr)}
+.footer-links a{padding:.35rem .4rem;border-radius:8px}
+.footer-links a:hover{background:rgba(0,0,0,.06)}
+.field{display:grid;margin-bottom:10px}
+input, textarea{border:1px solid var(--glass-brd);background:rgba(255,255,255,.35);padding:.7rem .9rem;border-radius:12px;color:#0b2f2a}
+textarea{min-height:120px;resize:vertical}
+</style>
+
+<script>
+document.getElementById('contact-form')?.addEventListener('submit',e=>{
+  e.preventDefault(); document.getElementById('contact-ok').style.display='block'; e.target.reset();
+});
+</script>
