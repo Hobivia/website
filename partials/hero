@@ -2,23 +2,54 @@
   <div class="hero">
     <div class="inner reveal">
       <h1>Ton activité, ton hébergement de rêve</h1>
-      <p>Une sélection d’hébergements uniques et d’architectures inspirantes, pensés pour tes passions.</p>
-      <a class="btn" href="logement.html?id=1">Explorer</a>
+      <p>Découvre des logements insolites pensés pour tes passions, au cœur de lieux exceptionnels.</p>
+      <a class="btn" href="logement.html">Explorer</a>
     </div>
   </div>
 </section>
 
 <style>
 .hero{
-  position:relative;margin:20px 0;border-radius:26px;
-  overflow:hidden;min-height:65vh;
-  display:grid;place-items:center;text-align:center;color:#f0fbf7
+  position:relative;
+  margin:20px 0;
+  border-radius:26px;
+  overflow:hidden;
+  min-height:65vh;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  color:#fdf8f4; /* texte clair avec teinte chaude */
 }
+
+/* Image de fond avec effet zoom */
 .hero::before{
-  content:"";position:absolute;inset:0;
-  background: website/images/tinyhouses-index.jpg center/cover no-repeat;
-  filter:brightness(.65)
+  content:"";
+  position:absolute;
+  inset:0;
+  background:url('/images/tinyhouses-index.jpg') center/cover no-repeat;
+  filter:brightness(.7);
+  transform:scale(1);
+  transition:transform 4s ease;
 }
-.hero .inner{position:relative;z-index:1;padding:2rem}
-.hero p{color:#e6f4ef;max-width:720px;margin:14px auto 24px}
+.hero:hover::before{
+  transform:scale(1.05); /* zoom fluide */
+}
+
+.hero .inner{
+  position:relative;
+  z-index:1;
+  padding:2rem;
+}
+.hero h1{
+  font-size:clamp(32px,5vw,56px);
+  color:#ffecd1; /* titre plus chaleureux */
+  text-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+.hero p{
+  color:#fff4e9;
+  max-width:720px;
+  margin:14px auto 24px;
+  font-size:1.1rem;
+  line-height:1.6;
+}
 </style>
