@@ -1,0 +1,33 @@
+<section class="section container">
+  <h2 class="reveal">Nos critères de sélection</h2>
+  <div class="criteria">
+    <div class="item glass reveal">
+      <div class="icon">🏡</div>
+      <h3>Architecture</h3>
+      <p>Des lieux au design soigné, intégrés dans leur environnement.</p>
+    </div>
+    <div class="item glass reveal">
+      <div class="icon">🧭</div>
+      <h3>Emplacement</h3>
+      <p>Accès simple à l’activité : lac, rivière, océan ou montagne.</p>
+    </div>
+    <div class="item glass reveal">
+      <div class="icon">✨</div>
+      <h3>Expérience</h3>
+      <p>Une immersion réelle : calme, nature, sensations et confort.</p>
+    </div>
+    <div class="item glass reveal">
+      <div class="icon">🌿</div>
+      <h3>Qualité</h3>
+      <p>Hébergements vérifiés et entretenus, hôtes réactifs.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+.criteria{display:grid;gap:16px;grid-template-columns:repeat(4,1fr)}
+@media(max-width:980px){.criteria{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.criteria{grid-template-columns:1fr}}
+.criteria .item{padding:22px;text-align:center}
+.criteria .icon{width:64px;height:64px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.25);border:1px solid var(--glass-brd)}
+</style>
