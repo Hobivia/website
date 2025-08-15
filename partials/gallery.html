@@ -1,0 +1,32 @@
+<section class="container">
+  <div class="scroller glass reveal">
+    <div class="track">
+      <img src="https://images.pexels.com/photos/31869617/pexels-photo-31869617.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/27809987/pexels-photo-27809987.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/20256531/pexels-photo-20256531.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/18098999/pexels-photo-18098999.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/8333238/pexels-photo-8333238.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/8383262/pexels-photo-8383262.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/13778071/pexels-photo-13778071.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/5976840/pexels-photo-5976840.jpeg" alt="">
+      <!-- duplication pour boucle fluide -->
+      <img src="https://images.pexels.com/photos/31869617/pexels-photo-31869617.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/27809987/pexels-photo-27809987.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/20256531/pexels-photo-20256531.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/18098999/pexels-photo-18098999.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/8333238/pexels-photo-8333238.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/8383262/pexels-photo-8383262.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/13778071/pexels-photo-13778071.jpeg" alt="">
+      <img src="https://images.pexels.com/photos/5976840/pexels-photo-5976840.jpeg" alt="">
+    </div>
+  </div>
+</section>
+
+<style>
+.scroller{overflow:hidden;border-radius:18px;margin-top:30px}
+.scroller .track{display:flex;gap:10px;align-items:center;animation:scrollX 35s linear infinite;padding:6px}
+.scroller:hover .track{animation-play-state:paused}
+.scroller img{height:160px;width:auto;border-radius:14px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,.12);transition:transform .4s}
+.scroller img:hover{transform:scale(1.04)}
+@keyframes scrollX{from{transform:translateX(0)} to{transform:translateX(-50%)}}
+</style>
