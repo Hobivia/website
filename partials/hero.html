@@ -3,7 +3,8 @@
     <div class="inner reveal">
       <h1>Ton activité, ton hébergement de rêve</h1>
       <p>Découvre des tiny houses et logements insolites pensés pour tes passions, au cœur de lieux exceptionnels.</p>
-      <a class="btn" href="logement.html">Explorer</a>
+      <!-- 👉 le lien pointe vers explorer.html -->
+      <a class="btn" href="explorer.html">Explorer</a>
     </div>
   </div>
 </section>
@@ -20,27 +21,26 @@
   text-align:center;
   color:#fdf8f4;
 }
+
+/* Image depuis Vercel (chemin absolu depuis la racine du site) */
 .hero::before{
   content:"";
   position:absolute;
   inset:0;
-  background:url('images/tinyhouses-index.jpg') center/cover no-repeat;
-  filter:brightness(.7);
+  background:
+    linear-gradient(0deg, rgba(0,0,0,.25), rgba(0,0,0,.15)),
+    url('/images/tinyhouses-index.jpg') center/cover no-repeat;
   transform:scale(1);
-  transition:transform 4s ease;
+  transition:transform 4s ease;   /* zoom très doux */
+  will-change: transform;
 }
-.hero:hover::before{
-  transform:scale(1.05);
-}
-.hero .inner{
-  position:relative;
-  z-index:1;
-  padding:2rem;
-}
+.hero:hover::before{ transform:scale(1.05); }
+
+.hero .inner{ position:relative; z-index:1; padding:2rem; }
 .hero h1{
   font-size:clamp(32px,5vw,56px);
-  color:#ffecd1;
-  text-shadow:0 4px 16px rgba(0,0,0,.3);
+  color:#ffecd1;                 /* teinte plus chaleureuse */
+  text-shadow:0 4px 16px rgba(0,0,0,.30);
 }
 .hero p{
   color:#fff4e9;
@@ -49,22 +49,23 @@
   font-size:1.1rem;
   line-height:1.6;
 }
+
 /* Bouton premium */
-.btn {
+.btn{
   display:inline-block;
-  background: var(--cta);
-  color: #fff;
-  padding: 0.8rem 1.6rem;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 1.05rem;
-  text-decoration: none;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-  transition: all 0.35s ease;
+  background:#D07B4E;
+  color:#fff;
+  padding:.85rem 1.6rem;
+  border-radius:50px;
+  font-weight:700;
+  font-size:1.05rem;
+  text-decoration:none;
+  box-shadow:0 4px 14px rgba(0,0,0,.15);
+  transition:transform .3s ease, box-shadow .3s ease, background .3s ease;
 }
-.btn:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-  background: #b8673f;
+.btn:hover{
+  transform:translateY(-2px) scale(1.03);
+  box-shadow:0 8px 22px rgba(0,0,0,.25);
+  background:#b8673f;            /* léger assombrissement au hover */
 }
 </style>
