@@ -1,0 +1,29 @@
+<section class="section container">
+  <h2 class="reveal">Par activité</h2>
+  <div class="grid grid-3">
+    <a class="card glass reveal" href="peche.html" title="Pêche">
+      <img src="https://images.unsplash.com/photo-1469594292607-7bd90f8d3ba4?q=80&w=1400&auto=format&fit=crop" alt="">
+      <span class="label">Pêche</span>
+    </a>
+    <div class="card glass reveal">
+      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop" alt="">
+      <span class="label">Randonnée</span>
+    </div>
+    <div class="card glass reveal">
+      <img src="https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?q=80&w=1400&auto=format&fit=crop" alt="">
+      <span class="label">VTT</span>
+    </div>
+  </div>
+</section>
+
+<style>
+.section{padding:40px 0}
+.grid{display:grid;gap:16px}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.grid-3{grid-template-columns:1fr}}
+.card{overflow:hidden;border-radius:20px;position:relative}
+.card img{width:100%;height:240px;object-fit:cover;display:block;transition:transform .6s ease, filter .6s ease}
+.card:hover img{transform:scale(1.06);filter:saturate(1.05)}
+.card .label{position:absolute;left:14px;bottom:14px;background:rgba(27,79,70,.76);color:#e8faf4;padding:.5rem .75rem;border-radius:999px;font-weight:700}
+</style>
