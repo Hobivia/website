@@ -1,0 +1,167 @@
+[
+  {
+    "nom": "Cabane du Lac Bleu",
+    "commune": "Annecy",
+    "pays": "France",
+    "activite": "Pêche",
+    "budget": "€€",
+    "latitude": 45.899247,
+    "longitude": 6.128935,
+    "short_desc": "Cabane sur pilotis au bord du lac avec ponton privé.",
+    "photo_url": "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+  },
+  {
+    "nom": "Lodge des Cimes",
+    "commune": "Chamonix",
+    "pays": "France",
+    "activite": "Randonnée",
+    "budget": "€€€",
+    "latitude": 45.923697,
+    "longitude": 6.869433,
+    "short_desc": "Lodge en altitude avec vue sur le Mont-Blanc.",
+    "photo_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+  },
+  {
+    "nom": "Maison du Canal",
+    "commune": "Carcassonne",
+    "pays": "France",
+    "activite": "Pêche",
+    "budget": "€",
+    "latitude": 43.213035,
+    "longitude": 2.350047,
+    "short_desc": "Maison cosy à deux pas du canal pour la pêche.",
+    "photo_url": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd"
+  },
+  {
+    "nom": "Chalet du Cervin",
+    "commune": "Zermatt",
+    "pays": "Suisse",
+    "activite": "Randonnée",
+    "budget": "€€€",
+    "latitude": 46.020713,
+    "longitude": 7.749117,
+    "short_desc": "Chalet de luxe face au Cervin pour randonneurs.",
+    "photo_url": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b"
+  },
+  {
+    "nom": "Eco-lodge du Piémont",
+    "commune": "Turin",
+    "pays": "Italie",
+    "activite": "VTT",
+    "budget": "€€",
+    "latitude": 45.070339,
+    "longitude": 7.686864,
+    "short_desc": "Eco-lodge avec accès direct aux pistes VTT.",
+    "photo_url": "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+  },
+  {
+    "nom": "Villa del Mare",
+    "commune": "Gênes",
+    "pays": "Italie",
+    "activite": "Surf",
+    "budget": "€€€",
+    "latitude": 44.40565,
+    "longitude": 8.946256,
+    "short_desc": "Villa moderne au bord de la Méditerranée.",
+    "photo_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+  },
+  {
+    "nom": "Cabane du Rhône",
+    "commune": "Genève",
+    "pays": "Suisse",
+    "activite": "Pêche",
+    "budget": "€€",
+    "latitude": 46.204391,
+    "longitude": 6.143158,
+    "short_desc": "Cabane au bord du Rhône pour pêcheurs passionnés.",
+    "photo_url": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05"
+  },
+  {
+    "nom": "Refuge du Lac Noir",
+    "commune": "Val d’Isère",
+    "pays": "France",
+    "activite": "Randonnée",
+    "budget": "€€",
+    "latitude": 45.448222,
+    "longitude": 6.980833,
+    "short_desc": "Refuge en montagne pour randonnées estivales.",
+    "photo_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+  },
+  {
+    "nom": "Maison des Oliviers",
+    "commune": "Nice",
+    "pays": "France",
+    "activite": "VTT",
+    "budget": "€€",
+    "latitude": 43.710173,
+    "longitude": 7.261953,
+    "short_desc": "Maison avec jardin proche de sentiers VTT.",
+    "photo_url": "https://images.unsplash.com/photo-1519821172141-b5d8a4d5a69e"
+  },
+  {
+    "nom": "Surf House de Biarritz",
+    "commune": "Biarritz",
+    "pays": "France",
+    "activite": "Surf",
+    "budget": "€€€",
+    "latitude": 43.483151,
+    "longitude": -1.558626,
+    "short_desc": "Maison contemporaine à 100m de la plage.",
+    "photo_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+  },
+  {
+    "nom": "Chalet du Simplon",
+    "commune": "Brig",
+    "pays": "Suisse",
+    "activite": "VTT",
+    "budget": "€€€",
+    "latitude": 46.316667,
+    "longitude": 8.0,
+    "short_desc": "Chalet alpin avec circuits VTT panoramiques.",
+    "photo_url": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b"
+  },
+  {
+    "nom": "Maison du Golfe",
+    "commune": "Ajaccio",
+    "pays": "France",
+    "activite": "Surf",
+    "budget": "€€",
+    "latitude": 41.919229,
+    "longitude": 8.738635,
+    "short_desc": "Maison vue mer idéale pour les surfeurs.",
+    "photo_url": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+  },
+  {
+    "nom": "Cabane de la Forêt Noire",
+    "commune": "La Chaux-de-Fonds",
+    "pays": "Suisse",
+    "activite": "Randonnée",
+    "budget": "€",
+    "latitude": 47.099004,
+    "longitude": 6.825857,
+    "short_desc": "Cabane rustique au départ de nombreux sentiers.",
+    "photo_url": "https://images.unsplash.com/photo-1467269204594-9661b134dd2b"
+  },
+  {
+    "nom": "Maison des Lacs",
+    "commune": "Côme",
+    "pays": "Italie",
+    "activite": "Pêche",
+    "budget": "€€€",
+    "latitude": 45.808059,
+    "longitude": 9.085176,
+    "short_desc": "Villa élégante sur les rives du lac de Côme.",
+    "photo_url": "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05"
+  },
+  {
+    "nom": "Eco-dôme du Piémont",
+    "commune": "Alba",
+    "pays": "Italie",
+    "activite": "Randonnée",
+    "budget": "€€",
+    "latitude": 44.700698,
+    "longitude": 8.03569,
+    "short_desc": "Eco-dôme moderne au cœur des collines.",
+    "photo_url": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee"
+  }
+]
