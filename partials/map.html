@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hobivia — Carte</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{
+  --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E;
+  --brd:rgba(255,255,255,.35); --glass:rgba(255,255,255,.14);
+  --act-peche:#2f7e72; --act-rando:#5b7d2b; --act-vtt:#7b3c9e; --act-surf:#1f6fb2;
+}
+*{box-sizing:border-box} html,body{height:100%;margin:0}
+body{font-family:Inter,system-ui,sans-serif;background:transparent}
+.wrap{height:100%;display:flex;flex-direction:column;gap:10px;padding:10px;background:transparent}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.select,.input{
+  border:1px solid var(--brd);
+  background:rgba(255,255,255,.35);
+  padding:.6rem .9rem;border-radius:14px
+}
+.badge{display:inline-block;background:rgba(255,255,255,.55);padding:.25rem .55rem;border-radius:999px;font-size:.82rem}
+#map{flex:1;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+/* pin */
+.hobi-pin{width:20px;height:20px;border-radius:50%;border:2.5px solid #ffffffcc;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+/* phrase d’accroche (optionnel) */
+.lead{padding:.7rem 1rem;border-radius:14px;background:var(--glass);border:1px solid var(--brd);color:#0f2f2a}
+.fade{transition:opacity .4s ease, transform .4s ease}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- phrase qui s’estompe au scroll (douce) -->
+  <div id="lead" class="lead fade">
+    Trouver le <strong>bon logement</strong>, c’est garantir une expérience qui respecte ton activité <em>et</em> ton confort.
+  </div>
+
+  <!-- filtres -->
+  <div class="tools">
+    <select id="f-pays" class="select">
+      <option value="">Tous pays</option>
+      <option>France</option><option>Italie</option><option>Suisse</option>
+      <option>Norvège</option><option>Espagne</option><option>Finlande</option>
+    </select>
+    <select id="f-activite" class="select">
+      <option value="">Toutes activités</option>
+      <option>Pêche</option><option>Randonnée</option><option>VTT</option><option>Surf</option>
+    </select>
+    <select id="f-prix" class="select">
+      <option value="">Tous prix</option>
+      <option value="€">€</option><option value="€€">€€</option><option value="€€€">€€€</option>
+    </select>
+    <input id="q" class="input" placeholder="Rechercher (ex : lac, cabane…)"/>
+  </div>
+
+  <!-- carte -->
+  <div id="map"></div>
+
+  <!-- légende -->
+  <div>
+    <span class="badge" style="background:linear-gradient(180deg,var(--act-peche),#1b4f46);color:#fff">Pêche</span>
+    <span class="badge" style="background:linear-gradient(180deg,var(--act-rando),#3f5b19);color:#fff">Randonnée</span>
+    <span class="badge" style="background:linear-gradient(180deg,var(--act-vtt),#512a6e);color:#fff">VTT</span>
+    <span class="badge" style="background:linear-gradient(180deg,var(--act-surf),#124d84);color:#fff">Surf</span>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* -------- Données -------- */
+// Utilise le JSON global si tu l’as (sinon le pêche)
+const JSON_URLS = ["data/hobivia-global.json","data/hobivia-peche.json"];
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop";
+
+const $ = s=>document.querySelector(s);
+let DATA = [];
+let markers = [];
+
+const map = L.map('map',{scrollWheelZoom:true}).setView([46.6,2.2], 5.5);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+
+function pinFor(activity){
+  const root = getComputedStyle(document.documentElement);
+  const pick = (v)=>root.getPropertyValue(v).trim();
+  let col = pick('--act-peche');
+  const a = (activity||'').toLowerCase();
+  if(a.includes('rando')) col = pick('--act-rando');
+  else if(a.includes('vtt')) col = pick('--act-vtt');
+  else if(a.includes('surf')) col = pick('--act-surf');
+  return L.divIcon({className:'', html:`<div class="hobi-pin" style="background:linear-gradient(180deg,${col},#123)"></div>`, iconSize:[20,20]});
+}
+
+function norm(x){
+  return {
+    nom: x.nom || "Logement Hobivia",
+    commune: x.commune || "",
+    pays: x.pays || x.destination || "France",
+    activite: x.activite || x.type || "Pêche",
+    tier: x.budget || "",
+    lat: Number(x.latitude), lng: Number(x.longitude),
+    photo: x.photo_url || FALLBACK_IMG
+  };
+}
+
+function matchFilters(l){
+  const pays = $('#f-pays').value;
+  const act  = $('#f-activite').value;
+  const prix = $('#f-prix').value;
+  const q    = $('#q').value.trim().toLowerCase();
+  const okP = !pays || (l.pays||"").toLowerCase()===pays.toLowerCase();
+  const okA = !act  || (l.activite||"").toLowerCase().includes(act.toLowerCase());
+  const okB = !prix || (l.tier||"")===prix;
+  const txt = (l.nom+" "+l.commune+" "+l.pays+" "+l.activite).toLowerCase();
+  return okP && okA && okB && (!q || txt.includes(q));
+}
+
+function render(){
+  // clear markers
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  const list = DATA.filter(matchFilters);
+  list.forEach(l=>{
+    const m = L.marker([l.lat,l.lng],{icon:pinFor(l.activite)}).addTo(map)
+      .bindPopup(`<strong>${l.nom}</strong><br><small>${l.commune||l.pays}</small>`);
+    markers.push(m);
+  });
+  if(list.length){
+    const b = L.latLngBounds(list.map(l=>[l.lat,l.lng]));
+    map.fitBounds(b.pad(0.2));
+  }
+}
+
+async function loadData(){
+  for(const url of JSON_URLS){
+    try{
+      const r = await fetch(url,{cache:'no-store'});
+      if(!r.ok) continue;
+      const arr = await r.json();
+      DATA = (arr||[]).map(norm).filter(l=>!Number.isNaN(l.lat)&&!Number.isNaN(l.lng));
+      break;
+    }catch(_){}
+  }
+  render();
+}
+
+['f-pays','f-activite','f-prix','q'].forEach(id => $( '#'+id ).addEventListener('input', render));
+loadData();
+
+/* Fade de l’accroche au scroll */
+const lead = document.getElementById('lead');
+window.addEventListener('scroll', ()=>{
+  const y = window.scrollY;
+  const ratio = Math.min(1, y/140);
+  lead.style.opacity = String(1 - ratio);
+  lead.style.transform = `translateY(${ratio*10}px)`;
+});
+</script>
+</body>
+</html>
