@@ -4,211 +4,51 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hobivia — Explorer</title>
-
-  <!-- même CSS global que l’index -->
   <link href="/assets/css/main.css" rel="stylesheet" />
-
   <style>
-    :root{
-      --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#1c1f1e; --blanc:#fff; --brd:rgba(0,0,0,.08);
-      --glass: rgba(15,15,20,.28);
-    }
-    html,body{margin:0;padding:0;background:var(--beige);color:var(--noir);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .page{min-height:100dvh;display:grid;grid-template-rows:auto auto 1fr auto}
-
-    /* Hero */
-    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(27,79,70,.08), rgba(208,123,78,.08));border-bottom:1px solid var(--brd)}
-    .hero-inner{max-width:1100px;margin:0 auto;padding:22px 16px;text-align:center}
-    .hero h1{margin:0;font-size:20px;line-height:1.35;font-weight:700}
-
-    /* Mounts */
-    .mount{min-height:40px}
-    .mount.loading{opacity:.6}
-    .mount.error{padding:12px;border-top:1px solid var(--brd);color:#a00;background:#fff}
-
-    /* Liste logements */
-    .listing{max-width:1200px;margin:24px auto 80px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.06);overflow:hidden;transition:transform .25s ease, box-shadow .25s ease, opacity .5s ease, transform .5s ease}
-    .card:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(0,0,0,.12)}
-    .card img{width:100%;height:160px;object-fit:cover;display:block}
-    .card-body{padding:12px}
-    .card-title{font-weight:700;margin:0 0 4px}
-    .card-meta{font-size:12px;color:#666;margin-bottom:8px}
-    .card-desc{font-size:13px;line-height:1.35;min-height:2.6em;margin-bottom:10px}
-    .price-badge{display:inline-block;font-size:12px;background:#1B4F46;color:#fff;padding:4px 8px;border-radius:999px}
-    .actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
-    .reserve-btn{appearance:none;border:none;background:#D07B4E;color:#fff;font-weight:700;padding:10px 12px;border-radius:12px;cursor:pointer}
-    .reserve-btn:hover{opacity:.92}
-
-    /* Effets sortie gauche/droite au scroll */
-    .fade-item{opacity:1;transform:translateX(0)}
-    .fade-out-left{opacity:0;transform:translateX(-24px)}
-    .fade-out-right{opacity:0;transform:translateX(24px)}
-
-    /* Curseur glass sombre (overlay au-dessus de tout) */
-    .glass-cursor{
-      position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px;
-      background:var(--glass); backdrop-filter: blur(6px) saturate(120%) brightness(.95);
-      box-shadow:0 2px 10px rgba(0,0,0,.25); pointer-events:none; transform:translate(-50%,-50%);
-      z-index:9999; transition:width .12s ease, height .12s ease, opacity .2s ease;
-    }
-    @media (hover:hover){
-      a:hover ~ .glass-cursor, button:hover ~ .glass-cursor{ width:34px; height:34px; }
-    }
+    :root{ --brd:rgba(0,0,0,.08); }
+    html,body{margin:0;background:#EDE6DA;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .hero{background:linear-gradient(135deg, rgba(27,79,70,.08), rgba(208,123,78,.08));border-bottom:1px solid var(--brd)}
+    .hero-inner{max-width:1100px;margin:0 auto;padding:24px 16px;text-align:center}
+    .nav-cards{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+    .card{background:#fff;border:1px solid var(--brd);border-radius:14px;padding:18px;text-decoration:none;color:inherit;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .card h3{margin:0 0 6px 0}
+    [data-include]{display:block;min-height:40px}
   </style>
 </head>
 <body>
-  <div class="page">
-    <!-- HEADER -->
-    <div id="headerMount" class="mount" data-src="/partials/header.html"></div>
+  <div data-include="/partials/header.html"></div>
 
-    <!-- HERO -->
-    <section class="hero" aria-label="Intro Explorer">
-      <div class="hero-inner">
-        <h1>Chaque point sur la carte est une expérience unique à vivre. Lequel sera le tien ?</h1>
-      </div>
+  <section class="hero" aria-label="Intro Explorer">
+    <div class="hero-inner">
+      <h1>Chaque point sur la carte est une expérience unique à vivre. Lequel sera le tien ?</h1>
+    </div>
+  </section>
+
+  <main>
+    <section class="nav-cards" aria-label="Navigation Explorer">
+      <a class="card" href="/partials/map.html?data=/data/hobivia-global.json">
+        <h3>Voir la carte</h3>
+        <p>Parcourir les points sur une carte moderne (catégories colorées, popups, etc.).</p>
+      </a>
+      <a class="card" href="/logements.html">
+        <h3>Liste des logements</h3>
+        <p>Découvrir tous les logements, avec photos, descriptions et prix à partir de…</p>
+      </a>
     </section>
+  </main>
 
-    <!-- MAP (on passe l’URL data en query, même logique que index) -->
-    <div id="mapMount" class="mount" data-src="/partials/map.html" data-query="data=/data/hobivia-global.json"></div>
-
-    <!-- LISTE LOGEMENTS sous la carte -->
-    <section id="logements" aria-label="Liste des logements" class="listing"></section>
-
-    <!-- FOOTER -->
-    <div id="footerMount" class="mount" data-src="/partials/footer.html"></div>
-  </div>
-
-  <!-- Curseur glass sombre -->
-  <div id="glassCursor" class="glass-cursor" aria-hidden="true"></div>
+  <div data-include="/partials/footer.html"></div>
 
   <script>
-    // ====== CONFIG ======
-    const DATA_URL = '/data/hobivia-global.json';
-
-    // ====== UTILS ======
-    const $  = (sel,root=document)=>root.querySelector(sel);
-    const $$ = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
-
-    // Charge un partial et exécute ses <script> (comme l’index)
-    async function loadPartial(mount){
-      const base  = mount.getAttribute('data-src');
-      if(!base) return;
-      const extra = mount.getAttribute('data-query');
-      const url   = extra ? `${base}?${extra}` : base;
-
-      mount.classList.add('loading');
-      try{
-        const res  = await fetch(url, { cache:'no-store' });
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        const html = await res.text();
-
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-
-        mount.innerHTML = '';
-        tmp.childNodes.forEach(node=>{
-          if(node.tagName === 'SCRIPT'){
-            const s = document.createElement('script');
-            for (const attr of node.attributes || []) s.setAttribute(attr.name, attr.value);
-            s.textContent = node.textContent;
-            mount.appendChild(s);
-          } else {
-            mount.appendChild(node.cloneNode(true));
-          }
-        });
-      }catch(e){
-        console.error(e);
-        mount.classList.add('error');
-        mount.innerHTML = `<small>Impossible de charger ${base}. Vérifie le chemin.</small>`;
-      }finally{
-        mount.classList.remove('loading');
+    (async function includeAll(){
+      for (const el of document.querySelectorAll('[data-include]')){
+        try{
+          const res = await fetch(el.getAttribute('data-include'), { cache:'no-store' });
+          el.innerHTML = await res.text();
+        }catch{ el.innerHTML = '<small style="padding:12px;display:block">Erreur de chargement du partiel.</small>'; }
       }
-    }
-
-    // ====== LISTE LOGEMENTS ======
-    const pick = (obj, keys) => { for (const k of keys){ if (obj?.[k]!==undefined && obj?.[k]!==null && obj?.[k]!=="" ) return obj[k]; } };
-    const getName  = it => pick(it,["name","title","nom","Nom"]) || 'Sans nom';
-    const getCity  = it => pick(it,["city","ville","location"]) || '';
-    const getDesc  = it => pick(it,["shortDescription","resume","description"]) || '';
-    const getImage = it => it?.image || it?.thumbnail || (Array.isArray(it?.images)&&it.images[0]) || 'https://via.placeholder.com/640x360?text=Hobivia';
-    const getCat   = it => pick(it,["category","categorie","type"]) || 'Divers';
-    const getPrice = it => {
-      const p = pick(it,["priceFrom","price_from","prixFrom","prix","minPrice","prixMin","a_partir_de"]);
-      const currency = pick(it,["currency","devise"]) || '€';
-      if(p===undefined) return null;
-      const n=Number(p); const v=Number.isFinite(n)? Math.round(n): p;
-      return `À partir de ${v}${currency==='€'?'€':' '+currency}`;
-    };
-    const getBook  = it => pick(it,["bookingUrl","reserveUrl","url","link","slug"]) || '#';
-
-    function cardTemplate(it, idx){
-      const lr = (idx % 2 === 0) ? 'fade-out-left' : 'fade-out-right';
-      const name=getName(it), city=getCity(it), cat=getCat(it);
-      return `<article class="card ${lr}" data-idx="${idx}">
-        <img src="${getImage(it)}" alt="${name}">
-        <div class="card-body">
-          <h3 class="card-title">${name}</h3>
-          <div class="card-meta">${[city,cat].filter(Boolean).join(' • ')}</div>
-          <p class="card-desc">${getDesc(it) || ''}</p>
-          <div class="actions">
-            <span class="price-badge">${getPrice(it) || 'Tarif sur demande'}</span>
-            <a href="${getBook(it)}" target="_blank" rel="noopener">
-              <button class="reserve-btn" type="button">Réserver</button>
-            </a>
-          </div>
-        </div>
-      </article>`;
-    }
-
-    function setupScrollFade(root){
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          const el = entry.target;
-          if(entry.isIntersecting){
-            el.classList.remove('fade-out-left','fade-out-right');
-            el.classList.add('fade-item');
-          } else {
-            const idx = Number(el.getAttribute('data-idx')) || 0;
-            el.classList.remove('fade-item');
-            el.classList.add(idx % 2 === 0 ? 'fade-out-left' : 'fade-out-right');
-          }
-        });
-      }, { root:null, threshold:0.15 });
-      root.querySelectorAll('.card').forEach(el=>io.observe(el));
-    }
-
-    async function renderList(){
-      try{
-        const res = await fetch(DATA_URL, { cache:'no-store' });
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        const json  = await res.json();
-        const items = Array.isArray(json) ? json : (json.items || json.data || []);
-        const container = document.getElementById('logements');
-        container.innerHTML = items.map((it,idx)=>cardTemplate(it, idx)).join('');
-        setupScrollFade(container);
-      }catch(e){ console.error(e); }
-    }
-
-    // ====== CURSEUR GLASS ======
-    (function initGlassCursor(){
-      const c = document.getElementById('glassCursor');
-      let visible = true;
-      document.addEventListener('mousemove', (e)=>{
-        if(!visible){ c.style.opacity = '1'; visible = true; }
-        c.style.left = e.clientX + 'px';
-        c.style.top  = e.clientY + 'px';
-      });
-      document.addEventListener('mouseleave', ()=>{ c.style.opacity = '0'; visible = false; });
     })();
-
-    // ====== BOOT ======
-    document.addEventListener('DOMContentLoaded', async () => {
-      // charge header, map, footer (la map reçoit ?data=/data/hobivia-global.json)
-      await Promise.all(Array.from(document.querySelectorAll('.mount')).map(loadPartial));
-      // rend la liste sous la carte
-      renderList();
-    });
   </script>
 </body>
 </html>
