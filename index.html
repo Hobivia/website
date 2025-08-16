@@ -22,17 +22,14 @@ async function includePartials(){
     const url=s.getAttribute('data-include');
     const res=await fetch(url); s.innerHTML=await res.text();
   }));
-  // init interactions après insertion
-  initCursor(); initReveal();
-}
-function initCursor(){
-  const dot=document.querySelector('#cursor'); if(!dot) return;
-  window.addEventListener('mousemove',e=>{dot.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;});
-}
-function initReveal(){
-  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.15});
-  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-}
-includePartials();
-</script>
-</body></html>
+  // ====== CURSEUR GLASS ======
+    (function initGlassCursor(){
+      const c = document.getElementById('glassCursor');
+      let visible = true;
+      document.addEventListener('mousemove', (e)=>{
+        if(!visible){ c.style.opacity = '1'; visible = true; }
+        c.style.left = e.clientX + 'px';
+        c.style.top  = e.clientY + 'px';
+      });
+      document.addEventListener('mouseleave', ()=>{ c.style.opacity = '0'; visible = false; });
+    })();
