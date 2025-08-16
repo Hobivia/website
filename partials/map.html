@@ -55,7 +55,7 @@
 <body>
   <div class="page">
     <header>
-      <div class="brand">🗺️ Hobivia · Carte</div>
+      <div class="brand"> Hobivia · Carte</div>
       <div class="controls slide-in-right">
         <label class="control" title="Recherche texte">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="2"/></svg>
@@ -88,8 +88,7 @@
   <script>
     // ====== 🔗 CONFIG ======
     // URL par défaut vers ton JSON global (surchargable par ?data=)
-    const JSON_URL = (new URLSearchParams(location.search).get('data'))
-      || '/assets/hobivia-global.json';
+    const JSON_URL = '/data/hobivia-global.json';
 
     // ====== 🧠 UTIL ======
     const $ = sel => document.querySelector(sel);
