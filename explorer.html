@@ -4,18 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Hobivia — Explorer</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    :root{ --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#1c1f1e; --blanc:#fff; --glass:rgba(255,255,255,.12); --brd:rgba(0,0,0,.08); }
+    :root{ --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#1c1f1e; --blanc:#fff; --brd:rgba(0,0,0,.08); }
     html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--beige);color:#1c1f1e}
-    .page{min-height:100dvh;display:grid;grid-template-rows:auto auto 1fr auto}
-    /* Header/Footer containers for partials */
-    #headerMount, #footerMount{background:#fff}
+    .page{min-height:100dvh;display:grid;grid-template-rows:auto auto auto 1fr auto}
 
-    /* Hero */
-    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(27,79,70,.08), rgba(208,123,78,.08));border-bottom:1px solid rgba(0,0,0,.06)}
-    .hero-inner{max-width:1100px;margin:0 auto;padding:22px 16px;display:flex;align-items:center;gap:16px}
-    .hero h1{margin:0;font-size:20px;line-height:1.35;color:#1c1f1e;font-weight:700}
+    /* Hero + effets fluides */
+    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(27,79,70,.08), rgba(208,123,78,.08));border-bottom:1px solid var(--brd)}
+    .hero-inner{max-width:1100px;margin:0 auto;padding:22px 16px}
+    .hero h1{margin:0;font-size:20px;line-height:1.35;font-weight:700}
     .flow{position:absolute;inset:0;pointer-events:none}
     .blob{position:absolute;top:50%;width:38vw;max-width:520px;aspect-ratio:1/1;border-radius:50%;filter:blur(30px);opacity:.18}
     .blob.left{left:-20vw;background:radial-gradient(circle at 30% 50%, var(--vert), transparent 60%);animation:slideLeft 9s ease-in-out infinite alternate}
@@ -23,129 +22,177 @@
     @keyframes slideLeft{from{transform:translateX(-4vw)} to{transform:translateX(10vw)}}
     @keyframes slideRight{from{transform:translateX(4vw)} to{transform:translateX(-10vw)}}
 
-    /* Toolbar */
-    .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--brd)}
-    .toolbar-inner{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .control{display:flex;align-items:center;gap:8px;background:var(--glass);backdrop-filter:saturate(140%) blur(6px);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:8px 10px}
-    .control input,.control select{background:transparent;border:none;outline:none}
-    .pill{background:#fff;border:1px solid var(--brd);padding:6px 10px;border-radius:999px;cursor:pointer;font-size:13px}
-    .pill[aria-pressed="true"]{background:#1B4F46;color:#fff;border-color:#1B4F46}
-    .spacer{flex:1}
+    /* Mounts (partiels) */
+    .mount{min-height:40px}
+    .mount.loading{opacity:.5}
+    .mount.error{padding:12px;border-top:1px solid var(--brd);color:#a00;background:#fff}
 
-    /* Map area */
-    .content{display:grid;grid-template-columns:1fr;min-height:60dvh}
-    .map-wrap{border-top:1px solid var(--brd)}
-    .map-iframe{width:100%;height:70dvh;border:0;display:block}
+    /* Liste logements */
+    .listing{max-width:1200px;margin:24px auto 80px auto;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+    .card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.06);overflow:hidden;transition:transform .25s ease, box-shadow .25s ease, opacity .5s ease, transform .5s ease}
+    .card:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(0,0,0,.12)}
+    .card img{width:100%;height:160px;object-fit:cover;display:block}
+    .card-body{padding:12px}
+    .card-title{font-weight:700;margin:0 0 4px 0}
+    .card-meta{font-size:12px;color:#666;margin-bottom:8px}
+    .card-desc{font-size:13px;line-height:1.35;min-height:2.6em;margin-bottom:10px}
+    .price-badge{display:inline-block;font-size:12px;background:#1B4F46;color:#fff;padding:4px 8px;border-radius:999px}
+    .actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
+    .reserve-btn{appearance:none;border:none;background:#D07B4E;color:#fff;font-weight:700;padding:10px 12px;border-radius:12px;cursor:pointer}
+    .reserve-btn:hover{opacity:.92}
 
-    @media (min-width:1000px){ .map-iframe{height:78dvh} }
-    .fade-in{animation:fadeIn .6s ease-out both}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+    /* Sorties fluides gauche/droite au scroll */
+    .fade-item{opacity:1;transform:translateX(0)}
+    .fade-out-left{opacity:0;transform:translateX(-24px)}
+    .fade-out-right{opacity:0;transform:translateX(24px)}
   </style>
 </head>
 <body>
   <div class="page">
-    <!-- Header (partial loaded) -->
-    <div id="headerMount" data-src="/partials/header.html"></div>
+    <!-- HEADER si tu en as un: on peut aussi le charger en partiel ici -->
+    <!-- <div class="mount" data-src="/partials/header.html"></div> -->
 
-    <!-- Hero with your sentence -->
-    <section class="hero">
+    <!-- HERO -->
+    <section class="hero" aria-label="Intro">
       <div class="flow"><div class="blob left"></div><div class="blob right"></div></div>
       <div class="hero-inner">
         <h1>Chaque point sur la carte est une expérience unique à vivre. Lequel sera le tien ?</h1>
       </div>
     </section>
 
-    <!-- Toolbar (filters) synced to the map iframe via querystring) -->
-    <div class="toolbar">
-      <div class="toolbar-inner">
-        <label class="control" title="Recherche">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="#333" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#333" stroke-width="2"/></svg>
-          <input id="q" type="search" placeholder="Rechercher… (nom, ville, tags)" />
-        </label>
-        <label class="control" title="Catégorie">
-          <select id="cat"><option value="">Toutes catégories</option></select>
-        </label>
-        <button id="resetBtn" class="pill" type="button">Réinitialiser</button>
-        <div class="spacer"></div>
-        <a class="pill" href="/map.html" target="_blank" rel="noopener">Ouvrir la carte en plein écran</a>
-      </div>
-    </div>
+    <!-- MAP (depuis /partials/map.html) -->
+    <div id="mapMount" class="mount" data-src="/partials/map.html" data-query="data=/data/hobivia-global.json"></div>
 
-    <!-- Content: Map embedded -->
-    <main class="content">
-      <div class="map-wrap">
-        <iframe id="mapFrame" class="map-iframe fade-in" src="/map.html?data=/assets/hobivia-global.json" title="Carte Hobivia"></iframe>
-      </div>
-    </main>
+    <!-- LISTE LOGEMENTS sous la carte -->
+    <section id="logements" aria-label="Liste des logements" class="listing"></section>
 
-    <!-- Footer (partial loaded) -->
-    <div id="footerMount" data-src="/partials/footer.html"></div>
+    <!-- READER (depuis /partials/reader.html) -->
+    <div id="readerMount" class="mount" data-src="/partials/reader.html"></div>
+
+    <!-- FOOTER (depuis /partials/footer.html) -->
+    <div id="footerMount" class="mount" data-src="/partials/footer.html"></div>
   </div>
 
   <script>
-    // ====== CONFIG ======
-    const DATA_URL = '/assets/hobivia-global.json'; // JSON global
+    // ========= CONFIG =========
+    const DATA_URL = '/data/hobivia-global.json';
 
-    // ====== UTIL ======
+    // ========= UTILS =========
     const $ = (sel,root=document)=>root.querySelector(sel);
     const $$ = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
-    function qs(obj){ return new URLSearchParams(obj).toString(); }
+    const qs = obj => new URLSearchParams(obj).toString();
 
-    // ====== Load partials (header/footer) ======
-    async function loadPartials(){
-      for (const mount of $$('#headerMount, #footerMount')){
-        const url = mount.getAttribute('data-src');
-        if (!url) continue;
-        try{
-          const res = await fetch(url, { cache: 'no-store' });
-          if (!res.ok) throw new Error('HTTP '+res.status);
-          mount.innerHTML = await res.text();
-        }catch(e){
-          mount.innerHTML = `<div style="padding:12px;border-top:1px solid #eee">\n            <small>Impossible de charger ${url}. Vérifie le chemin.</small>\n          </div>`;
-        }
+    // Charge un partiel HTML et exécute ses <script>
+    async function loadPartial(mount){
+      const base = mount.getAttribute('data-src');
+      if(!base) return;
+      const extra = mount.getAttribute('data-query');
+      const url = extra ? `${base}?${extra}` : base;
+
+      mount.classList.add('loading');
+      try{
+        const res = await fetch(url, { cache:'no-store' });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const html = await res.text();
+
+        // Injecte et ré-exécute les scripts
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+
+        // Remplace le contenu du mount
+        mount.innerHTML = '';
+        // Cloner et insérer en exécutant les scripts
+        tmp.childNodes.forEach(node=>{
+          if(node.tagName === 'SCRIPT'){
+            const s = document.createElement('script');
+            // Copie attributs (src, type, etc.)
+            for (const attr of node.attributes || []) s.setAttribute(attr.name, attr.value);
+            s.textContent = node.textContent;
+            mount.appendChild(s);
+          } else {
+            mount.appendChild(node.cloneNode(true));
+          }
+        });
+      }catch(e){
+        console.error(e);
+        mount.classList.add('error');
+        mount.innerHTML = `<small>Impossible de charger ${base}. Vérifie le chemin dans /partials et les assets référencés.</small>`;
+      }finally{
+        mount.classList.remove('loading');
       }
     }
 
-    // ====== Fetch categories once from the JSON to populate the select ======
-    async function initFilters(){
+    // ========= LISTE LOGEMENTS (depuis DATA_URL) =========
+    const pick = (obj, keys) => { for (const k of keys){ if (obj?.[k]!==undefined && obj?.[k]!==null && obj?.[k]!=="" ) return obj[k]; } };
+    const getName = it => pick(it,["name","title","nom","Nom"]) || 'Sans nom';
+    const getCity = it => pick(it,["city","ville","location"]) || '';
+    const getDesc = it => pick(it,["shortDescription","resume","description"]) || '';
+    const getImage = it => it?.image || it?.thumbnail || (Array.isArray(it?.images)&&it.images[0]) || 'https://via.placeholder.com/640x360?text=Hobivia';
+    const getCategory = it => pick(it,["category","categorie","type"]) || 'Divers';
+    const getPrice = it => {
+      const p = pick(it,["priceFrom","price_from","prixFrom","prix","minPrice","prixMin","a_partir_de"]);
+      const currency = pick(it,["currency","devise"]) || '€';
+      if(p===undefined) return null;
+      const n=Number(p); const v=Number.isFinite(n)? Math.round(n): p;
+      return `À partir de ${v}${currency==='€'?'€':' '+currency}`;
+    };
+    const getBookUrl = it => pick(it,["bookingUrl","reserveUrl","url","link","slug"]) || '#';
+
+    function cardTemplate(it, idx){
+      const name=getName(it), city=getCity(it), cat=getCategory(it);
+      const img=getImage(it), desc=getDesc(it), price=getPrice(it), href=getBookUrl(it);
+      const lr = (idx % 2 === 0) ? 'fade-out-left' : 'fade-out-right';
+      return `<article class="card ${lr}" data-idx="${idx}">
+        <img src="${img}" alt="${name}">
+        <div class="card-body">
+          <h3 class="card-title">${name}</h3>
+          <div class="card-meta">${[city,cat].filter(Boolean).join(' • ')}</div>
+          <p class="card-desc">${desc}</p>
+          <div class="actions">
+            <span class="price-badge">${price || 'Tarif sur demande'}</span>
+            <a href="${href}" target="_blank" rel="noopener">
+              <button class="reserve-btn" type="button">Réserver</button>
+            </a>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function setupScrollFade(root){
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          const el = entry.target;
+          if(entry.isIntersecting){
+            el.classList.remove('fade-out-left','fade-out-right');
+            el.classList.add('fade-item');
+          } else {
+            const idx = Number(el.getAttribute('data-idx')) || 0;
+            el.classList.remove('fade-item');
+            el.classList.add(idx % 2 === 0 ? 'fade-out-left' : 'fade-out-right');
+          }
+        });
+      }, { root:null, threshold:0.15 });
+      root.querySelectorAll('.card').forEach(el=>io.observe(el));
+    }
+
+    async function renderList(){
       try{
-        const res = await fetch(DATA_URL, { cache: 'no-store' });
+        const res = await fetch(DATA_URL, { cache:'no-store' });
         if(!res.ok) throw new Error('HTTP '+res.status);
         const json = await res.json();
         const items = Array.isArray(json) ? json : (json.items || json.data || []);
-        const cats = Array.from(new Set(items.map(i => i.category || i.categorie || i.type || 'Divers'))).sort();
-        $('#cat').innerHTML = '<option value="">Toutes catégories</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
-      }catch(e){ /* silencieux pour l'UI */ }
+        const container = document.getElementById('logements');
+        container.innerHTML = items.map((it,idx)=>cardTemplate(it, idx)).join('');
+        setupScrollFade(container);
+      }catch(e){ console.error(e); }
     }
 
-    // ====== Sync filters to the map iframe via querystring ======
-    function updateMapSrc(){
-      const q = $('#q').value || '';
-      const cat = $('#cat').value || '';
-      const src = `/map.html?${qs({ data: DATA_URL, q, cat })}`;
-      $('#mapFrame').setAttribute('src', src);
-      const url = new URL(location.href);
-      if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
-      if (cat) url.searchParams.set('cat', cat); else url.searchParams.delete('cat');
-      history.replaceState(null, '', url);
-    }
-
-    function applyFromURL(){
-      const u = new URL(location.href);
-      const q = u.searchParams.get('q') || '';
-      const cat = u.searchParams.get('cat') || '';
-      $('#q').value = q; $('#cat').value = cat;
-      if (q || cat) updateMapSrc();
-    }
-
-    // ====== Events ======
+    // ========= BOOT =========
     document.addEventListener('DOMContentLoaded', async () => {
-      await loadPartials();
-      await initFilters();
-      applyFromURL();
-      $('#q').addEventListener('input', updateMapSrc);
-      $('#cat').addEventListener('change', updateMapSrc);
-      $('#resetBtn').addEventListener('click', () => { $('#q').value=''; $('#cat').value=''; updateMapSrc(); });
+      // Charge les partiels
+      await Promise.all($$('.mount').map(loadPartial));
+      // Rend la liste
+      renderList();
     });
   </script>
 </body>
