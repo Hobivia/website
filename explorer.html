@@ -1,102 +1,152 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Hobivia — Explorer</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hobivia — Explorer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root{ --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#1c1f1e; --blanc:#fff; --glass:rgba(255,255,255,.12); --brd:rgba(0,0,0,.08); }
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--beige);color:#1c1f1e}
+    .page{min-height:100dvh;display:grid;grid-template-rows:auto auto 1fr auto}
+    /* Header/Footer containers for partials */
+    #headerMount, #footerMount{background:#fff}
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    /* Hero */
+    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(27,79,70,.08), rgba(208,123,78,.08));border-bottom:1px solid rgba(0,0,0,.06)}
+    .hero-inner{max-width:1100px;margin:0 auto;padding:22px 16px;display:flex;align-items:center;gap:16px}
+    .hero h1{margin:0;font-size:20px;line-height:1.35;color:#1c1f1e;font-weight:700}
+    .flow{position:absolute;inset:0;pointer-events:none}
+    .blob{position:absolute;top:50%;width:38vw;max-width:520px;aspect-ratio:1/1;border-radius:50%;filter:blur(30px);opacity:.18}
+    .blob.left{left:-20vw;background:radial-gradient(circle at 30% 50%, var(--vert), transparent 60%);animation:slideLeft 9s ease-in-out infinite alternate}
+    .blob.right{right:-20vw;background:radial-gradient(circle at 70% 50%, var(--cta), transparent 60%);animation:slideRight 9s ease-in-out infinite alternate}
+    @keyframes slideLeft{from{transform:translateX(-4vw)} to{transform:translateX(10vw)}}
+    @keyframes slideRight{from{transform:translateX(4vw)} to{transform:translateX(-10vw)}}
 
-<style>
-:root{
-  --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#1c1f1e; --blanc:#fff;
-  --glass:rgba(255,255,255,.14); --brd:rgba(255,255,255,.35); --shadow:0 10px 30px rgba(0,0,0,.18);
-}
-*{box-sizing:border-box} html,body{margin:0}
-body{font-family:Inter,sans-serif;background:var(--beige);color:var(--noir);cursor:none}
-.container{max-width:1180px;margin:0 auto;padding:0 20px}
-h1,h2,h3{font-family:"Space Grotesk",sans-serif;color:var(--vert);margin:0}
-.glass{background:var(--glass);border:1px solid var(--brd);backdrop-filter:blur(14px);border-radius:22px;box-shadow:var(--shadow)}
-.btn{display:inline-flex;align-items:center;gap:.55rem;background:var(--cta);color:#fff;padding:.65rem 1.1rem;border-radius:999px;font-weight:700;text-decoration:none;transition:.3s;box-shadow:0 4px 14px rgba(0,0,0,.15)}
-.btn:hover{transform:translateY(-2px) scale(1.02);background:#b8673f}
+    /* Toolbar */
+    .toolbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--brd)}
+    .toolbar-inner{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .control{display:flex;align-items:center;gap:8px;background:var(--glass);backdrop-filter:saturate(140%) blur(6px);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:8px 10px}
+    .control input,.control select{background:transparent;border:none;outline:none}
+    .pill{background:#fff;border:1px solid var(--brd);padding:6px 10px;border-radius:999px;cursor:pointer;font-size:13px}
+    .pill[aria-pressed="true"]{background:#1B4F46;color:#fff;border-color:#1B4F46}
+    .spacer{flex:1}
 
-/* Accroche fade */
-.lead{margin:18px 0 12px;padding:14px 18px;text-align:center}
-.fade-on-scroll{transition:opacity .4s ease, transform .4s ease}
+    /* Map area */
+    .content{display:grid;grid-template-columns:1fr;min-height:60dvh}
+    .map-wrap{border-top:1px solid var(--brd)}
+    .map-iframe{width:100%;height:70dvh;border:0;display:block}
 
-/* Curseur glass global (au-dessus de tout) */
-.cursor{position:fixed;inset:0;pointer-events:none;z-index:9999}
-.cursor-dot{position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.25);border:1px solid var(--brd);backdrop-filter:blur(8px);transform:translate(-50%,-50%);box-shadow:0 6px 18px rgba(0,0,0,.12)}
-@media(hover:none){body{cursor:auto}.cursor{display:none}}
-
-/* Grille liste (placeholder) */
-.section{padding:22px 0 46px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:980px){.grid{grid-template-columns:1fr}}
-.card{padding:14px}
-</style>
+    @media (min-width:1000px){ .map-iframe{height:78dvh} }
+    .fade-in{animation:fadeIn .6s ease-out both}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+  </style>
 </head>
 <body>
+  <div class="page">
+    <!-- Header (partial loaded) -->
+    <div id="headerMount" data-src="/partials/header.html"></div>
 
-<!-- Curseur -->
-<div class="cursor"><div class="cursor-dot" id="cursor"></div></div>
+    <!-- Hero with your sentence -->
+    <section class="hero">
+      <div class="flow"><div class="blob left"></div><div class="blob right"></div></div>
+      <div class="hero-inner">
+        <h1>Chaque point sur la carte est une expérience unique à vivre. Lequel sera le tien ?</h1>
+      </div>
+    </section>
 
-<!-- ▼ header via partial -->
-<div data-include="partials/header.html"></div>
+    <!-- Toolbar (filters) synced to the map iframe via querystring) -->
+    <div class="toolbar">
+      <div class="toolbar-inner">
+        <label class="control" title="Recherche">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 21l-4.35-4.35" stroke="#333" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#333" stroke-width="2"/></svg>
+          <input id="q" type="search" placeholder="Rechercher… (nom, ville, tags)" />
+        </label>
+        <label class="control" title="Catégorie">
+          <select id="cat"><option value="">Toutes catégories</option></select>
+        </label>
+        <button id="resetBtn" class="pill" type="button">Réinitialiser</button>
+        <div class="spacer"></div>
+        <a class="pill" href="/map.html" target="_blank" rel="noopener">Ouvrir la carte en plein écran</a>
+      </div>
+    </div>
 
-<main class="container">
-  <!-- Accroche (introduit la carte) -->
-  <div id="lead" class="lead glass fade-on-scroll">
-    Chaque point sur la carte est une expérience unique à vivre. Lequel sera le tien ?
+    <!-- Content: Map embedded -->
+    <main class="content">
+      <div class="map-wrap">
+        <iframe id="mapFrame" class="map-iframe fade-in" src="/map.html?data=/assets/hobivia-global.json" title="Carte Hobivia"></iframe>
+      </div>
+    </main>
+
+    <!-- Footer (partial loaded) -->
+    <div id="footerMount" data-src="/partials/footer.html"></div>
   </div>
 
-  <!-- Carte injectée depuis map.html (réutilisation réelle) -->
-  <section class="glass" style="padding:8px;margin-bottom:22px">
-    <iframe src="map.html" title="Carte Hobivia" style="width:100%;height:600px;border:0;border-radius:18px;overflow:hidden;"></iframe>
-  </section>
+  <script>
+    // ====== CONFIG ======
+    const DATA_URL = '/assets/hobivia-global.json'; // JSON global
 
-  <!-- Liste synchronisée (à implémenter si tu veux aussi la sortir en partial plus tard) -->
-  <section class="section">
-    <h2>Todos les logements</h2>
-    <div id="list" class="grid">
-      <!-- Placeholder visuel (tu peux retirer) -->
-      <article class="card glass">La liste se charge via la page Explorer autonome — on peut la factoriser en partial si tu veux.</article>
-      <article class="card glass">Option : déplacer la logique de liste dans un fichier `partials/list.html` + `list.js`.</article>
-    </div>
-  </section>
-</main>
+    // ====== UTIL ======
+    const $ = (sel,root=document)=>root.querySelector(sel);
+    const $$ = (sel,root=document)=>Array.from(root.querySelectorAll(sel));
+    function qs(obj){ return new URLSearchParams(obj).toString(); }
 
-<!-- ▼ footer via partial -->
-<div data-include="partials/footer.html"></div>
+    // ====== Load partials (header/footer) ======
+    async function loadPartials(){
+      for (const mount of $$('#headerMount, #footerMount')){
+        const url = mount.getAttribute('data-src');
+        if (!url) continue;
+        try{
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error('HTTP '+res.status);
+          mount.innerHTML = await res.text();
+        }catch(e){
+          mount.innerHTML = `<div style="padding:12px;border-top:1px solid #eee">\n            <small>Impossible de charger ${url}. Vérifie le chemin.</small>\n          </div>`;
+        }
+      }
+    }
 
-<script type="module">
-/* Inclure les partials header/footer */
-async function includePartials(){
-  const slots=[...document.querySelectorAll('[data-include]')];
-  await Promise.all(slots.map(async s=>{
-    const url=s.getAttribute('data-include');
-    try{
-      const res=await fetch(url,{cache:"no-store"});
-      if(!res.ok) return;
-      s.innerHTML=await res.text();
-    }catch(e){ console.warn("Partial introuvable:",url); }
-  }));
-}
-includePartials();
+    // ====== Fetch categories once from the JSON to populate the select ======
+    async function initFilters(){
+      try{
+        const res = await fetch(DATA_URL, { cache: 'no-store' });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const json = await res.json();
+        const items = Array.isArray(json) ? json : (json.items || json.data || []);
+        const cats = Array.from(new Set(items.map(i => i.category || i.categorie || i.type || 'Divers'))).sort();
+        $('#cat').innerHTML = '<option value="">Toutes catégories</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+      }catch(e){ /* silencieux pour l'UI */ }
+    }
 
-/* Curseur glass */
-const dot=document.querySelector('.cursor-dot');
-window.addEventListener('mousemove',e=>{
-  dot.style.top=e.clientY+'px'; dot.style.left=e.clientX+'px';
-});
+    // ====== Sync filters to the map iframe via querystring ======
+    function updateMapSrc(){
+      const q = $('#q').value || '';
+      const cat = $('#cat').value || '';
+      const src = `/map.html?${qs({ data: DATA_URL, q, cat })}`;
+      $('#mapFrame').setAttribute('src', src);
+      const url = new URL(location.href);
+      if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
+      if (cat) url.searchParams.set('cat', cat); else url.searchParams.delete('cat');
+      history.replaceState(null, '', url);
+    }
 
-/* Fade de l’accroche au scroll */
-const lead=document.getElementById('lead');
-window.addEventListener('scroll', ()=>{
-  const y=window.scrollY; const ratio=Math.min(1,y/180);
-  lead.style.opacity=String(1-ratio);
-  lead.style.transform=`translateY(${ratio*12}px)`;
-});
-</script>
+    function applyFromURL(){
+      const u = new URL(location.href);
+      const q = u.searchParams.get('q') || '';
+      const cat = u.searchParams.get('cat') || '';
+      $('#q').value = q; $('#cat').value = cat;
+      if (q || cat) updateMapSrc();
+    }
+
+    // ====== Events ======
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadPartials();
+      await initFilters();
+      applyFromURL();
+      $('#q').addEventListener('input', updateMapSrc);
+      $('#cat').addEventListener('change', updateMapSrc);
+      $('#resetBtn').addEventListener('click', () => { $('#q').value=''; $('#cat').value=''; updateMapSrc(); });
+    });
+  </script>
 </body>
 </html>
