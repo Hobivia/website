@@ -1,9 +1,30 @@
-<!DOCTYPE html><html lang="fr"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Hobivia – Accueil</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-</head><body>
+<style>
+  /* Curseur sombre */
+  #cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(255,255,255,0.25);
+    pointer-events: none;
+    transform: translate(-50%,-50%);
+    z-index: 9999;
+    mix-blend-mode: normal; /* pour bien ressortir */
+    backdrop-filter: blur(4px);
+    transition: width 0.2s ease, height 0.2s ease;
+  }
+</style>
+</head>
+<body>
 <div data-include="/partials/header.html"></div>
 <div data-include="/partials/hero.html"></div>
 <div class="glass" style="padding:8px;border-radius:22px">
@@ -14,6 +35,9 @@
 <div data-include="/partials/criteria.html"></div>
 <div data-include="/partials/gallery.html"></div>
 <div data-include="/partials/footer.html"></div>
+
+<!-- Curseur sombre -->
+<div id="cursor"></div>
 
 <script type="module">
 async function includePartials(){
@@ -27,12 +51,17 @@ async function includePartials(){
 }
 function initCursor(){
   const dot=document.querySelector('#cursor'); if(!dot) return;
-  window.addEventListener('mousemove',e=>{dot.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;});
+  window.addEventListener('mousemove',e=>{
+    dot.style.transform=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`;
+  });
 }
 function initReveal(){
-  const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.15});
+  const obs=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting)e.target.classList.add('in')
+  }),{threshold:.15});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 }
 includePartials();
 </script>
-</body></html>
+</body>
+</html>
