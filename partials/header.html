@@ -1,41 +1,31 @@
+<!-- HEADER minimaliste avec logo image centré et effet glass -->
 <style>
-:root{
-  --vert:#1B4F46;--beige:#EDE6DA;--cta:#D07B4E;
-  --brd:rgba(255,255,255,.35);--glass:rgba(255,255,255,.14);
-}
-*{box-sizing:border-box}
-body{font-family:Inter,sans-serif;background:var(--beige);color:#1e1e1e}
-
-/* Header centré */
-.glass{background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--brd);border-radius:22px}
-.header{position:sticky;top:0;z-index:40;margin-top:8px}
-.header .bar{
-  display:flex;justify-content:center;align-items:center;
-  padding:12px 14px;max-width:1180px;margin:0 auto;
-}
-.brand img{height:48px}
-
-/* Curseur glass */
-body{cursor:none}
-.cursor{position:fixed;inset:0;pointer-events:none}
-.cursor-dot{
-  position:absolute;width:18px;height:18px;border-radius:50%;
-  background:rgba(255,255,255,.25);border:1px solid var(--brd);
-  backdrop-filter:blur(8px);
-  transform:translate(-50%,-50%);
-  box-shadow:0 6px 18px rgba(0,0,0,.12)
-}
-@media(hover:none){body{cursor:auto}.cursor{display:none}}
-
-/* Reveal */
-.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s, transform .6s}
-.reveal.in{opacity:1;transform:none}
+  .hbv-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(17,19,21,.55);
+    border-bottom: 1px solid rgba(255,255,255,.18);
+  }
+  .hbv-header .wrap {
+    max-width: 1200px;
+    margin: auto;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .hbv-logo img {
+    height: 42px; /* ajuste la taille selon ton design */
+    display: block;
+  }
 </style>
 
-<div class="cursor"><div class="cursor-dot" id="cursor"></div></div>
-
-<header class="header">
-  <div class="bar glass">
-    <a class="brand" href="index.html"><img src="/images/logo-hobivia.png" alt="Hobivia"></a>
+<header class="hbv-header">
+  <div class="wrap">
+    <a href="index.html" class="hbv-logo">
+      <img src="images/logo-hobivia.png" alt="Hobivia Logo">
+    </a>
   </div>
 </header>
