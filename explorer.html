@@ -1,223 +1,150 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hobivia — Explorer</title>
-  <link href="/assets/css/main.css" rel="stylesheet" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hobivia — Explorer</title>
 
-  <style>
-    :root{
-      --vert:#1B4F46; --cta:#D07B4E; --noir:#1c1f1e; --beige:#EDE6DA; --brd:rgba(0,0,0,.08);
-      --glass: rgba(15,15,20,.28);
-    }
-    html,body{margin:0;background:var(--beige);color:var(--noir);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    [data-include]{display:block;min-height:40px}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
-    /* Hero (UNE seule phrase ici) */
-    .hero{background:linear-gradient(135deg, rgba(27,79,70,.08), rgba(208,123,78,.08));border-bottom:1px solid var(--brd)}
-    .hero-inner{max-width:1100px;margin:0 auto;padding:24px 16px;text-align:center}
-    .hero h1{margin:0;font-size:20px;line-height:1.35;font-weight:700}
+<style>
+  :root{
+    --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#111315; --blanc:#fff;
+    --glass:rgba(255,255,255,.12); --brd:rgba(255,255,255,.28); --shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--noir);color:var(--beige);font-family:Inter,system-ui,Arial,sans-serif}
+  a{color:inherit;text-decoration:none}
+  .container{min-height:100svh; display:flex; flex-direction:column}
 
-    /* SECTION CARTE (partiel inclus) */
-    #mapSection{max-width:1400px;margin:0 auto;padding:0 0 8px}
-    #mapMount{min-height:60vh}
-    /* Quand on insère /partials/map.html, on masque son header/hero internes (si présents) */
-    #mapMount header, #mapMount .hero { display:none !important; }
-    #mapMount #map{ height:72vh !important; }
+  /* zones */
+  #app-header, #app-footer{position:relative; z-index:10}
+  #app-main{flex:1; display:flex; flex-direction:column}
 
-    /* LISTE LOGEMENTS */
-    .listing{max-width:1200px;margin:24px auto 80px;padding:0 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-    .card{background:#fff;border:1px solid var(--brd);border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.06);transition:transform .25s ease, box-shadow .25s ease, opacity .5s ease, transform .5s ease}
-    .card:hover{transform:translateY(-2px);box-shadow:0 14px 38px rgba(0,0,0,.12)}
-    .card img{width:100%;height:180px;object-fit:cover;display:block}
-    .card-body{padding:12px}
-    .card-title{font-weight:700;margin:0 0 4px}
-    .card-meta{font-size:12px;color:#666;margin-bottom:8px}
-    .card-desc{font-size:13px;line-height:1.35;min-height:2.6em;margin-bottom:10px}
-    .price-badge{display:inline-block;font-size:12px;background:var(--vert);color:#fff;padding:4px 8px;border-radius:999px}
-    .actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:6px}
-    .reserve-btn{appearance:none;border:none;background:var(--cta);color:#fff;font-weight:700;padding:10px 12px;border-radius:12px;cursor:pointer}
-    .reserve-btn:hover{opacity:.92}
+  /* loader squelettes */
+  .skeleton{position:relative; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid var(--brd); border-radius:18px}
+  .skeleton::after{
+    content:""; position:absolute; inset:0; transform:translateX(-100%);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+    animation: shimmer 1.2s infinite;
+  }
+  @keyframes shimmer{ 100% { transform:translateX(100%); } }
 
-    /* Effets fluides gauche/droite au scroll */
-    .fade-item{opacity:1;transform:translateX(0)}
-    .fade-out-left{opacity:0;transform:translateX(-24px)}
-    .fade-out-right{opacity:0;transform:translateX(24px)}
+  .block{padding: clamp(16px, 3vw, 28px)}
+  #map-block{margin: clamp(10px, 2vw, 18px); border-radius:20px}
+  #list-block{margin: clamp(10px, 2vw, 18px)}
 
-    /* Curseur “glass” sombre au-dessus de tout */
-    .glass-cursor{
-      position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px;
-      background:var(--glass); backdrop-filter: blur(6px) saturate(120%) brightness(.95);
-      box-shadow:0 2px 10px rgba(0,0,0,.25); pointer-events:none; transform:translate(-50%,-50%);
-      z-index:9999; transition:width .12s ease, height .12s ease, opacity .2s ease;
-    }
-  </style>
+  /* Curseur glass sombre global */
+  .glass-cursor{
+    position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px; pointer-events:none; z-index:9999;
+    background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 100%);
+    border:1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px);
+    transform: translate(-50%,-50%); transition: width .2s ease, height .2s ease, transform .05s linear;
+    mix-blend-mode: screen;
+  }
+  @media (hover:none){ .glass-cursor{ display:none; } }
+
+  /* liens d’ancrage smooth */
+  html{scroll-behavior:smooth}
+</style>
 </head>
 <body>
-  <!-- HEADER (comme sur index.html) -->
-  <div data-include="/partials/header.html"></div>
+<div class="container">
 
-  <!-- HERO unique -->
-  <section class="hero" aria-label="Intro Explorer">
-    <div class="hero-inner">
-      <h1>Chaque point sur la carte est une expérience unique à vivre. Lequel sera le tien ?</h1>
-    </div>
-  </section>
+  <!-- HEADER -->
+  <header id="app-header" class="block skeleton" aria-live="polite">Chargement de l’en-tête…</header>
 
-  <!-- SECTION CARTE (partiel inclus en DOM, PAS de redirection) -->
-  <section id="mapSection" aria-label="Carte Hobivia">
-    <div id="mapMount" data-src="/partials/map.html" data-query="data=/data/hobivia-global.json"></div>
-  </section>
+  <!-- MAIN -->
+  <main id="app-main">
+    <!-- MAP -->
+    <section id="map-block" class="block skeleton" aria-label="Carte">Chargement de la carte…</section>
 
-  <!-- SECTION LISTE LOGEMENTS -->
-  <section id="logements" class="listing" aria-label="Liste des logements"></section>
+    <!-- LISTE LOGEMENTS -->
+    <section id="list-block" class="block skeleton" aria-label="Logements">Chargement des logements…</section>
+  </main>
 
   <!-- FOOTER -->
-  <div data-include="/partials/footer.html"></div>
+  <footer id="app-footer" class="block skeleton" aria-live="polite">Chargement du pied de page…</footer>
 
-  <!-- Curseur glass sombre -->
-  <div id="glassCursor" class="glass-cursor" aria-hidden="true"></div>
+</div>
 
-  <script>
-    const DATA_URL = '/data/hobivia-global.json';
+<!-- Curseur glass sombre -->
+<div class="glass-cursor" id="glassCursor" aria-hidden="true"></div>
 
-    // ---------- Helpers chargement de partiels (même logique que index) ----------
-    async function includeAll(){
-      for (const el of document.querySelectorAll('[data-include]')){
-        try{
-          const res = await fetch(el.getAttribute('data-include'), { cache:'no-store' });
-          el.innerHTML = await res.text();
-        }catch{
-          el.innerHTML = '<small style="padding:12px;display:block">Erreur de chargement du partiel.</small>';
-        }
+<script>
+/* ========= Utilitaires ========= */
+const $ = (s,ctx=document)=>ctx.querySelector(s);
+
+/* Charge un partial HTML et exécute ses <script> (inline + src) */
+async function loadPartial(targetEl, url){
+  try{
+    const res = await fetch(url, {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status+' @ '+url);
+    const html = await res.text();
+
+    // Injecte le HTML
+    targetEl.innerHTML = html;
+    targetEl.classList.remove('skeleton');
+
+    // Exécute les <script> du partial
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+
+    const scripts = Array.from(tmp.querySelectorAll('script'));
+    for(const oldScr of scripts){
+      const newScr = document.createElement('script');
+      // Copie les attributs (src, type, nomodule, async, etc.)
+      for(const attr of oldScr.attributes){ newScr.setAttribute(attr.name, attr.value); }
+      // Si inline, recopie le contenu
+      if(!oldScr.src){ newScr.textContent = oldScr.textContent; }
+      // Insère au bon endroit : à la fin du target
+      targetEl.appendChild(newScr);
+      // Attends les scripts à src si async non spécifié (ordre déterministe)
+      if(newScr.src && !newScr.async){
+        await new Promise((resolve,reject)=>{
+          newScr.onload = resolve; newScr.onerror = reject;
+        });
       }
     }
+  }catch(err){
+    console.error(err);
+    targetEl.innerHTML = `
+      <div style="padding:16px;border:1px solid var(--brd);border-radius:14px;background:rgba(255,255,255,.06)">
+        <strong>Erreur de chargement</strong><br>
+        <code>${url}</code><br>
+        ${String(err.message || err)}
+      </div>`;
+    targetEl.classList.remove('skeleton');
+  }
+}
 
-    // Charge un partial dans #mapMount et exécute ses <script>, puis masque son framing
-    async function loadMapPartial(){
-      const mount = document.getElementById('mapMount');
-      const base  = mount.getAttribute('data-src');
-      const extra = mount.getAttribute('data-query');
-      const url   = extra ? `${base}?${extra}` : base;
+/* Curseur glass sombre (lissage) */
+(function glassCursor(){
+  const c = $('#glassCursor');
+  let x=0,y=0,tx=0,ty=0;
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const raf=()=>{ tx=lerp(tx,x,0.2); ty=lerp(ty,y,0.2); c.style.transform=`translate(${tx}px, ${ty}px) translate(-50%,-50%)`; requestAnimationFrame(raf); };
+  window.addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;},{passive:true});
+  raf();
+})();
 
-      try{
-        const res = await fetch(url, { cache:'no-store' });
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        const html = await res.text();
+/* Empêche la page de “sauter” si des ancres internes sont cliquées avant injection */
+document.addEventListener('click', (e)=>{
+  const a = e.target.closest('a[href^="#"]');
+  if(!a) return;
+  const id = a.getAttribute('href').slice(1);
+  const target = document.getElementById(id);
+  if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+},{capture:true});
 
-        const tmp = document.createElement('div');
-        tmp.innerHTML = html;
-
-        // Nettoie puis insère en réexécutant les scripts
-        mount.innerHTML = '';
-        tmp.childNodes.forEach(node=>{
-          if(node.tagName === 'SCRIPT'){
-            const s = document.createElement('script');
-            for (const attr of node.attributes || []) s.setAttribute(attr.name, attr.value);
-            s.textContent = node.textContent;
-            mount.appendChild(s);
-          } else {
-            mount.appendChild(node.cloneNode(true));
-          }
-        });
-
-        // Après insertion, masque header/hero internes du partiel si présents
-        mount.querySelectorAll('header,.hero').forEach(n=> n.remove());
-        // Force la hauteur de la carte
-        const mapDiv = mount.querySelector('#map');
-        if(mapDiv) mapDiv.style.height = '72vh';
-      }catch(e){
-        console.error(e);
-        mount.innerHTML = '<small style="padding:12px;display:block">Carte indisponible. Vérifie /partials/map.html et le JSON.</small>';
-      }
-    }
-
-    // ---------- Liste logements (connectée au JSON global) ----------
-    const pick = (o, keys) => { for (const k of keys){ if (o?.[k]!==undefined && o?.[k]!==null && o?.[k]!=='' ) return o[k]; } };
-    const getName  = it => pick(it,["name","title","nom","Nom"]) || 'Sans nom';
-    const getCity  = it => pick(it,["city","ville","location"]) || '';
-    const getDesc  = it => pick(it,["shortDescription","resume","description"]) || '';
-    const getImage = it => it?.image || it?.thumbnail || (Array.isArray(it?.images)&&it.images[0]) || 'https://via.placeholder.com/640x360?text=Hobivia';
-    const getCat   = it => pick(it,["category","categorie","type"]) || 'Divers';
-    const getPrice = it => {
-      const p = pick(it,["priceFrom","price_from","prixFrom","prix","minPrice","prixMin","a_partir_de"]);
-      const cur = pick(it,["currency","devise"]) || '€';
-      if(p===undefined) return null;
-      const n = Number(p); const v = Number.isFinite(n) ? Math.round(n) : p;
-      return `À partir de ${v}${cur==='€'?'€':' '+cur}`;
-    };
-    const getBook  = it => pick(it,["bookingUrl","reserveUrl","url","link","slug"]) || '#';
-    const isLodging = it => {
-      const c = (getCat(it) || '').toLowerCase();
-      return c.includes('logement') || c.includes('hébergement') || c.includes('hebergement') || c.includes('stay') || c.includes('lodg');
-    };
-
-    function cardTemplate(it, idx){
-      const lr = (idx % 2 === 0) ? 'fade-out-left' : 'fade-out-right';
-      const name=getName(it), city=getCity(it), cat=getCat(it);
-      return `<article class="card ${lr}" data-idx="${idx}">
-        <img src="${getImage(it)}" alt="${name}">
-        <div class="card-body">
-          <h3 class="card-title">${name}</h3>
-          <div class="card-meta">${[city,cat].filter(Boolean).join(' • ')}</div>
-          <p class="card-desc">${getDesc(it) || ''}</p>
-          <div class="actions">
-            <span class="price-badge">${getPrice(it) || 'Tarif sur demande'}</span>
-            <a href="${getBook(it)}" target="_blank" rel="noopener">
-              <button class="reserve-btn" type="button">Réserver</button>
-            </a>
-          </div>
-        </div>
-      </article>`;
-    }
-
-    function setupScrollFade(root){
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-          const el = entry.target;
-          if(entry.isIntersecting){
-            el.classList.remove('fade-out-left','fade-out-right');
-            el.classList.add('fade-item');
-          }else{
-            const idx = Number(el.getAttribute('data-idx')) || 0;
-            el.classList.remove('fade-item');
-            el.classList.add(idx % 2 === 0 ? 'fade-out-left' : 'fade-out-right');
-          }
-        });
-      }, { threshold:0.15 });
-      root.querySelectorAll('.card').forEach(el=>io.observe(el));
-    }
-
-    async function renderList(){
-      try{
-        const res = await fetch(DATA_URL, { cache:'no-store' });
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        const json  = await res.json();
-        const items = Array.isArray(json) ? json : (json.items || json.data || []);
-        const stays = items.filter(isLodging);
-        const container = document.getElementById('logements');
-        container.innerHTML = stays.map((it,idx)=>cardTemplate(it, idx)).join('');
-        setupScrollFade(container);
-      }catch(e){ console.error(e); }
-    }
-
-    // ---------- Curseur glass sombre ----------
-    (function initGlassCursor(){
-      const c = document.getElementById('glassCursor'); let visible = true;
-      document.addEventListener('mousemove', (e)=>{
-        if(!visible){ c.style.opacity = '1'; visible = true; }
-        c.style.left = e.clientX + 'px'; c.style.top  = e.clientY + 'px';
-      });
-      document.addEventListener('mouseleave', ()=>{ c.style.opacity = '0'; visible = false; });
-    })();
-
-    // ---------- Boot ----------
-    document.addEventListener('DOMContentLoaded', async () => {
-      await includeAll();     // header + footer
-      await loadMapPartial(); // carte en section
-      renderList();           // logements en section
-    });
-  </script>
+/* ========= Orchestration ========= */
+(async function boot(){
+  // IMPORTANT : l’ordre ici respecte tes dépendances visuelles
+  await loadPartial($('#app-header'), 'partials/header.html');
+  await loadPartial($('#map-block'), 'partials/map.html');
+  await loadPartial($('#list-block'), 'partials/explorer-list.html');
+  await loadPartial($('#app-footer'), 'partials/footer.html');
+})();
+</script>
 </body>
 </html>
