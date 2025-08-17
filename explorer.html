@@ -1,150 +1,210 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Hobivia — Explorer</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Hobivia — Explorer</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Pré-chargements / cohérence avec index -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
-<style>
-  :root{
-    --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#111315; --blanc:#fff;
-    --glass:rgba(255,255,255,.12); --brd:rgba(255,255,255,.28); --shadow:0 10px 30px rgba(0,0,0,.25);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--noir);color:var(--beige);font-family:Inter,system-ui,Arial,sans-serif}
-  a{color:inherit;text-decoration:none}
-  .container{min-height:100svh; display:flex; flex-direction:column}
+  <!-- (Sécurité) Leaflet si la map partial en dépend -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  /* zones */
-  #app-header, #app-footer{position:relative; z-index:10}
-  #app-main{flex:1; display:flex; flex-direction:column}
+  <style>
+    :root{
+      --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#111315; --blanc:#fff;
+      --glass:rgba(255,255,255,.12); --brd:rgba(255,255,255,.28); --shadow:0 10px 30px rgba(0,0,0,.25);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--noir);color:var(--beige);font-family:Inter,system-ui,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    html{scroll-behavior:smooth}
 
-  /* loader squelettes */
-  .skeleton{position:relative; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid var(--brd); border-radius:18px}
-  .skeleton::after{
-    content:""; position:absolute; inset:0; transform:translateX(-100%);
-    background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
-    animation: shimmer 1.2s infinite;
-  }
-  @keyframes shimmer{ 100% { transform:translateX(100%); } }
+    /* Structure globale (comme index) */
+    .container{min-height:100svh; display:flex; flex-direction:column}
+    header, footer{position:relative; z-index:10}
+    main{flex:1; display:flex; flex-direction:column}
 
-  .block{padding: clamp(16px, 3vw, 28px)}
-  #map-block{margin: clamp(10px, 2vw, 18px); border-radius:20px}
-  #list-block{margin: clamp(10px, 2vw, 18px)}
+    /* Blocks et placeholders */
+    .block{padding: clamp(16px, 3vw, 28px)}
+    #map-block{margin: clamp(10px, 2vw, 18px); border-radius:20px}
+    #list-block{margin: clamp(10px, 2vw, 18px)}
 
-  /* Curseur glass sombre global */
-  .glass-cursor{
-    position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px; pointer-events:none; z-index:9999;
-    background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 100%);
-    border:1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px);
-    transform: translate(-50%,-50%); transition: width .2s ease, height .2s ease, transform .05s linear;
-    mix-blend-mode: screen;
-  }
-  @media (hover:none){ .glass-cursor{ display:none; } }
+    .skeleton{position:relative; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid var(--brd); border-radius:18px}
+    .skeleton::after{
+      content:""; position:absolute; inset:0; transform:translateX(-100%);
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+      animation: shimmer 1.1s infinite;
+    }
+    @keyframes shimmer{ 100% { transform:translateX(100%); } }
 
-  /* liens d’ancrage smooth */
-  html{scroll-behavior:smooth}
-</style>
+    /* Curseur glass sombre (tu l’avais demandé pour Explorer) */
+    .glass-cursor{
+      position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px; pointer-events:none; z-index:9999;
+      background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 100%);
+      border:1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px);
+      transform: translate(-50%,-50%); transition: width .2s ease, height .2s ease, transform .05s linear;
+      mix-blend-mode: screen;
+    }
+    @media (hover:none){ .glass-cursor{ display:none; } }
+
+    /* Messages d’erreur clean */
+    .error{
+      padding:16px;border:1px solid var(--brd);border-radius:14px;background:rgba(255,255,255,.06)
+    }
+    .error code{background:rgba(0,0,0,.35);padding:.2rem .35rem;border-radius:8px}
+  </style>
 </head>
 <body>
-<div class="container">
+  <div class="container">
 
-  <!-- HEADER -->
-  <header id="app-header" class="block skeleton" aria-live="polite">Chargement de l’en-tête…</header>
+    <!-- HEADER -->
+    <header id="app-header" class="block skeleton" aria-live="polite">Chargement de l’en-tête…</header>
 
-  <!-- MAIN -->
-  <main id="app-main">
-    <!-- MAP -->
-    <section id="map-block" class="block skeleton" aria-label="Carte">Chargement de la carte…</section>
+    <!-- MAIN -->
+    <main id="app-main">
+      <!-- MAP -->
+      <section id="map-block" class="block skeleton" aria-label="Carte">Chargement de la carte…</section>
+      <!-- LISTE LOGEMENTS (partials/explorer-list.html) -->
+      <section id="list-block" class="block skeleton" aria-label="Logements">Chargement des logements…</section>
+    </main>
 
-    <!-- LISTE LOGEMENTS -->
-    <section id="list-block" class="block skeleton" aria-label="Logements">Chargement des logements…</section>
-  </main>
+    <!-- FOOTER -->
+    <footer id="app-footer" class="block skeleton" aria-live="polite">Chargement du pied de page…</footer>
+  </div>
 
-  <!-- FOOTER -->
-  <footer id="app-footer" class="block skeleton" aria-live="polite">Chargement du pied de page…</footer>
+  <!-- Curseur glass sombre -->
+  <div class="glass-cursor" id="glassCursor" aria-hidden="true"></div>
 
-</div>
+  <noscript>
+    <div class="error" style="margin:16px">
+      <strong>JavaScript requis.</strong> Active-le pour charger les sections depuis <code>partials/</code>.
+    </div>
+  </noscript>
 
-<!-- Curseur glass sombre -->
-<div class="glass-cursor" id="glassCursor" aria-hidden="true"></div>
+  <script>
+    // === Utilitaires DOM ===
+    const $  = (s,ctx=document)=>ctx.querySelector(s);
+    const $$ = (s,ctx=document)=>Array.from(ctx.querySelectorAll(s));
 
-<script>
-/* ========= Utilitaires ========= */
-const $ = (s,ctx=document)=>ctx.querySelector(s);
+    // === Dé-duplication des <link rel="stylesheet"> et <script src> ===
+    const loadedHrefs = new Set();
+    const loadedSrcs  = new Set();
 
-/* Charge un partial HTML et exécute ses <script> (inline + src) */
-async function loadPartial(targetEl, url){
-  try{
-    const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP '+res.status+' @ '+url);
-    const html = await res.text();
+    function ensureStyleInHead(linkEl){
+      const href = linkEl.getAttribute('href');
+      if(!href) return;
+      if(loadedHrefs.has(href)) return; // déjà chargé
+      loadedHrefs.add(href);
+      const l = document.createElement('link');
+      l.rel = linkEl.rel || 'stylesheet';
+      for(const a of linkEl.attributes){ l.setAttribute(a.name, a.value); }
+      document.head.appendChild(l);
+    }
 
-    // Injecte le HTML
-    targetEl.innerHTML = html;
-    targetEl.classList.remove('skeleton');
+    function ensureInlineStyleInHead(styleEl){
+      const s = document.createElement('style');
+      for(const a of styleEl.attributes){ s.setAttribute(a.name, a.value); }
+      s.textContent = styleEl.textContent;
+      document.head.appendChild(s);
+    }
 
-    // Exécute les <script> du partial
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
+    async function runScript(scriptEl, mount){
+      const isModule = (scriptEl.type || '').trim() === 'module';
+      const src = scriptEl.getAttribute('src');
 
-    const scripts = Array.from(tmp.querySelectorAll('script'));
-    for(const oldScr of scripts){
-      const newScr = document.createElement('script');
-      // Copie les attributs (src, type, nomodule, async, etc.)
-      for(const attr of oldScr.attributes){ newScr.setAttribute(attr.name, attr.value); }
-      // Si inline, recopie le contenu
-      if(!oldScr.src){ newScr.textContent = oldScr.textContent; }
-      // Insère au bon endroit : à la fin du target
-      targetEl.appendChild(newScr);
-      // Attends les scripts à src si async non spécifié (ordre déterministe)
-      if(newScr.src && !newScr.async){
-        await new Promise((resolve,reject)=>{
-          newScr.onload = resolve; newScr.onerror = reject;
+      const newScript = document.createElement('script');
+      // Copie attributs
+      for(const a of scriptEl.attributes){ newScript.setAttribute(a.name, a.value); }
+      if(src){
+        if(loadedSrcs.has(src)) return; // déjà chargé
+        loadedSrcs.add(src);
+        // Assure un ordre déterministe si pas async
+        const p = new Promise((resolve, reject)=>{
+          newScript.onload = resolve;
+          newScript.onerror = () => reject(new Error('Erreur chargement script '+src));
         });
+        mount.appendChild(newScript);
+        await p;
+      }else{
+        // inline (y compris type="module")
+        newScript.textContent = scriptEl.textContent;
+        mount.appendChild(newScript);
       }
     }
-  }catch(err){
-    console.error(err);
-    targetEl.innerHTML = `
-      <div style="padding:16px;border:1px solid var(--brd);border-radius:14px;background:rgba(255,255,255,.06)">
-        <strong>Erreur de chargement</strong><br>
-        <code>${url}</code><br>
-        ${String(err.message || err)}
-      </div>`;
-    targetEl.classList.remove('skeleton');
-  }
-}
 
-/* Curseur glass sombre (lissage) */
-(function glassCursor(){
-  const c = $('#glassCursor');
-  let x=0,y=0,tx=0,ty=0;
-  const lerp=(a,b,t)=>a+(b-a)*t;
-  const raf=()=>{ tx=lerp(tx,x,0.2); ty=lerp(ty,y,0.2); c.style.transform=`translate(${tx}px, ${ty}px) translate(-50%,-50%)`; requestAnimationFrame(raf); };
-  window.addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;},{passive:true});
-  raf();
-})();
+    // === Charge un partial et exécute ses assets ===
+    async function loadPartial(targetEl, url){
+      try{
+        const res = await fetch(url, {cache:'no-store'});
+        if(!res.ok) throw new Error('HTTP '+res.status+' @ '+url);
+        const html = await res.text();
 
-/* Empêche la page de “sauter” si des ancres internes sont cliquées avant injection */
-document.addEventListener('click', (e)=>{
-  const a = e.target.closest('a[href^="#"]');
-  if(!a) return;
-  const id = a.getAttribute('href').slice(1);
-  const target = document.getElementById(id);
-  if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
-},{capture:true});
+        // Parse en DOM isolé
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
 
-/* ========= Orchestration ========= */
-(async function boot(){
-  // IMPORTANT : l’ordre ici respecte tes dépendances visuelles
-  await loadPartial($('#app-header'), 'partials/header.html');
-  await loadPartial($('#map-block'), 'partials/map.html');
-  await loadPartial($('#list-block'), 'partials/explorer-list.html');
-  await loadPartial($('#app-footer'), 'partials/footer.html');
-})();
-</script>
+        // 1) Styles: <link rel="stylesheet"> vers <head>, <style> inline vers <head>
+        doc.querySelectorAll('link[rel~="stylesheet"]').forEach(ensureStyleInHead);
+        doc.querySelectorAll('style').forEach(ensureInlineStyleInHead);
+
+        // 2) Contenu visuel sans scripts ni styles (on nettoie pour éviter double-injection)
+        const content = doc.body ? doc.body.innerHTML : html;
+        // On retire les <script> et <style> du fragment avant injection
+        const tmp = document.createElement('div');
+        tmp.innerHTML = content;
+        tmp.querySelectorAll('script, style, link[rel~="stylesheet"]').forEach(n=>n.remove());
+
+        targetEl.innerHTML = tmp.innerHTML;
+        targetEl.classList.remove('skeleton');
+
+        // 3) Scripts (inline & src, y compris type="module") — ordre conservé
+        const scripts = Array.from(doc.querySelectorAll('script'));
+        for(const s of scripts){
+          await runScript(s, targetEl);
+        }
+      }catch(err){
+        console.error(err);
+        targetEl.innerHTML = `
+          <div class="error">
+            <strong>Erreur de chargement</strong><br>
+            <div>Impossible de charger <code>${url}</code></div>
+            <div style="opacity:.8;margin-top:6px">${String(err.message || err)}</div>
+          </div>`;
+        targetEl.classList.remove('skeleton');
+      }
+    }
+
+    // === Curseur glass sombre (inertiel) ===
+    (function glassCursor(){
+      const c = $('#glassCursor');
+      let x=0,y=0,tx=0,ty=0;
+      const lerp=(a,b,t)=>a+(b-a)*t;
+      const raf=()=>{ tx=lerp(tx,x,0.22); ty=lerp(ty,y,0.22); c.style.transform=`translate(${tx}px, ${ty}px) translate(-50%,-50%)`; requestAnimationFrame(raf); };
+      window.addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;},{passive:true});
+      raf();
+    })();
+
+    // === Gestion des ancres internes avant injection (évite les “sauts”) ===
+    document.addEventListener('click', (e)=>{
+      const a = e.target.closest('a[href^="#"]');
+      if(!a) return;
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+    }, {capture:true});
+
+    // === Orchestration : ordre identique à l’index (header -> map -> list -> footer) ===
+    (async function boot(){
+      await loadPartial($('#app-header'), 'partials/header.html');
+      await loadPartial($('#map-block'), 'partials/map.html');
+      await loadPartial($('#list-block'), 'partials/explorer-list.html'); // <- ta liste qui lit data/hobivia-global.json
+      await loadPartial($('#app-footer'), 'partials/footer.html');
+    })();
+  </script>
 </body>
 </html>
