@@ -5,124 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Hobivia – Accueil</title>
 
-  <!-- Polices -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  <!-- Tes styles globaux -->
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Squelettes de chargement légers (optionnel) */
-    .skeleton{position:relative; overflow:hidden; background:rgba(255,255,255,.06); border-radius:18px}
+    /* Optionnel : skeletons légers */
+    .skeleton{position:relative;overflow:hidden;background:rgba(255,255,255,.06);border-radius:18px}
     .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
       background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
-      animation:shimmer 1.2s infinite}
+      animation:shimmer 1.15s infinite}
     @keyframes shimmer{100%{transform:translateX(100%)}}
-
-    /* Sécurité : si un élément se retrouve au-dessus, le curseur garde la priorité */
-    .force-stacking{position:relative; z-index:1}
   </style>
 </head>
 <body>
-  <!-- En-tête -->
-  <div data-include="partials/header.html" class="force-stacking"></div>
+  <div data-include="partials/header.html" class="skeleton"></div>
+  <div data-include="partials/hero.html" class="skeleton"></div>
 
-  <!-- Hero -->
-  <div data-include="partials/hero.html" class="force-stacking"></div>
-
-  <!-- Carte (gardée en iframe comme chez toi) -->
-  <div class="glass force-stacking" style="padding:8px;border-radius:22px">
+  <div class="glass" style="padding:8px;border-radius:22px">
     <iframe src="partials/map.html"
             style="width:100%;height:600px;border:0;border-radius:18px;overflow:hidden;position:relative;z-index:1;"
             loading="lazy"></iframe>
   </div>
 
-  <!-- Activités -->
-  <div data-include="partials/activities.html" class="force-stacking"></div>
+  <div data-include="partials/activities.html" class="skeleton"></div>
+  <div data-include="partials/testimonials.html" class="skeleton"></div>
+  <div data-include="partials/criteria.html" class="skeleton"></div>
+  <div data-include="partials/gallery.html" class="skeleton"></div>
+  <div data-include="partials/footer.html" class="skeleton"></div>
 
-  <!-- Témoignages -->
-  <div data-include="partials/testimonials.html" class="force-stacking"></div>
-
-  <!-- Critères -->
-  <div data-include="partials/criteria.html" class="force-stacking"></div>
-
-  <!-- Galerie -->
-  <div data-include="partials/gallery.html" class="force-stacking"></div>
-
-  <!-- Pied de page -->
-  <div data-include="partials/footer.html" class="force-stacking"></div>
-
-  <!-- Curseur global (toujours en dernier pour être au-dessus de tout) -->
+  <!-- Curseur global (toujours injecté en dernier pour dominer le z-index) -->
   <div data-include="partials/cursor.html"></div>
 
   <script type="module">
-    // ===== Loader de partials qui exécute les <script> insérés =====
-    async function includePartials(){
-      const slots = [...document.querySelectorAll('[data-include]')];
+    import { includePartials } from './assets/js/partials-loader.js';
 
-      await Promise.all(slots.map(async (slot) => {
-        const url = slot.getAttribute('data-include');
-        if(!url) return;
-
-        try{
-          const res = await fetch(url, {cache:'no-store'});
-          if(!res.ok) throw new Error('HTTP '+res.status+' @ '+url);
-          const html = await res.text();
-
-          // Parse pour récupérer scripts et styles éventuels
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-
-          // Injecter d'abord le contenu sans <script> pour éviter double exécution
-          const frag = document.createElement('div');
-          frag.innerHTML = doc.body ? doc.body.innerHTML : html;
-          frag.querySelectorAll('script').forEach(s => s.remove());
-          slot.innerHTML = frag.innerHTML;
-
-          // Exécuter ensuite les <script> du partial (inline + src)
-          const scripts = Array.from(doc.querySelectorAll('script'));
-          for(const old of scripts){
-            const s = document.createElement('script');
-            // copier attributs (type, src, etc.)
-            for(const a of old.attributes){ s.setAttribute(a.name, a.value); }
-            if(old.src){
-              // respecter l'ordre si pas async
-              await new Promise((resolve, reject) => {
-                s.onload = resolve; s.onerror = reject;
-                slot.appendChild(s);
-              });
-            }else{
-              s.textContent = old.textContent;
-              slot.appendChild(s);
-            }
-          }
-        }catch(err){
-          console.error(err);
-          slot.innerHTML = `<div style="padding:16px;border:1px solid rgba(255,255,255,.25);border-radius:14px;background:rgba(255,255,255,.06)">
-            <strong>Erreur de chargement</strong><br>Impossible de charger <code>${url}</code>
-          </div>`;
-        }
-      }));
-    }
-
-    // ===== Révélation légère (si tu l’utilises) =====
-    function initReveal(){
-      if(!('IntersectionObserver' in window)) return;
-      const obs = new IntersectionObserver(
-        entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); }),
-        { threshold: .15 }
-      );
-      document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-    }
-
-    // Lancer
-    includePartials().then(initReveal);
+    // Charge tous les partials puis retire la classe skeleton
+    includePartials().then(()=>{
+      document.querySelectorAll('.skeleton').forEach(n=>n.classList.remove('skeleton'));
+    });
   </script>
-
-  <!--
-    NOTE IMPORTANTE (je te challenge là-dessus) :
-    - J'utilise des chemins RELATIFS "partials/..." et non "/partials/...".
-      Sur un hébergement statique (GitHub Pages, Vercel sans config custom), le slash initial
-      pointe vers la racine serveur et casse souvent les includes.
-      Si tu tiens au slash initial car tu as un reverse-proxy, remets-le, mais teste bien.
-  -->
 </body>
 </html>
