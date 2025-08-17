@@ -1,0 +1,29 @@
+<!-- partials/cursor.html -->
+<style>
+  #cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(255,255,255,0.25);
+    pointer-events: none;
+    transform: translate(-50%,-50%);
+    z-index: 99999; /* devant absolument tout */
+    mix-blend-mode: normal;
+    backdrop-filter: blur(4px);
+    transition: width 0.2s ease, height 0.2s ease;
+  }
+</style>
+
+<div id="cursor"></div>
+
+<script>
+(function initCursor(){
+  const dot=document.querySelector('#cursor');
+  if(!dot) return;
+  window.addEventListener('mousemove',e=>{
+    dot.style.transform=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`;
+  });
+})();
+</script>
