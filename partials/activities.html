@@ -1,29 +1,33 @@
-<section class="section container">
-  <h2 class="reveal">Par activité</h2>
-  <div class="grid grid-3">
-    <a class="card glass reveal" href="peche.html" title="Pêche">
-      <img src="https://images.unsplash.com/photo-1469594292607-7bd90f8d3ba4?q=80&w=1400&auto=format&fit=crop" alt="">
-      <span class="label">Pêche</span>
-    </a>
-    <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop" alt="">
-      <span class="label">Randonnée</span>
-    </div>
-    <div class="card glass reveal">
-      <img src="https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?q=80&w=1400&auto=format&fit=crop" alt="">
-      <span class="label">VTT</span>
-    </div>
+<!-- ACTIVITIES (grid + reveal) -->
+<style>
+  .hbv-section{max-width:1200px;margin:24px auto;padding:0 8px}
+  .hbv-title{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(20px,3vw,28px);margin:0 0 12px}
+  .hbv-grid{display:grid;gap:12px;grid-template-columns:repeat(1,minmax(0,1fr))}
+  @media(min-width:720px){.hbv-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .hbv-card{border-radius:16px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);
+    overflow:hidden;transition:transform .2s;backdrop-filter: blur(6px)}
+  .hbv-card:hover{transform:translateY(-2px)}
+  .hbv-card .media{aspect-ratio:16/10;background:#0e1012}
+  .hbv-card .media img{width:100%;height:100%;object-fit:cover;display:block}
+  .hbv-card .content{padding:10px}
+  .hbv-card h3{margin:0 0 6px;font-size:1.05rem}
+  .hbv-card p{margin:0;opacity:.85}
+</style>
+
+<section class="hbv-section reveal">
+  <h2 class="hbv-title">Activités à vivre</h2>
+  <div class="hbv-grid">
+    <article class="hbv-card">
+      <div class="media"><img loading="lazy" src="https://images.unsplash.com/photo-1482192505345-5655af888cc4?q=80&w=1200&auto=format&fit=crop" alt=""></div>
+      <div class="content"><h3>Randonnée</h3><p>Sentiers panoramiques à proximité.</p></div>
+    </article>
+    <article class="hbv-card">
+      <div class="media"><img loading="lazy" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop" alt=""></div>
+      <div class="content"><h3>Canoë</h3><p>Découvre les lacs et rivières locales.</p></div>
+    </article>
+    <article class="hbv-card">
+      <div class="media"><img loading="lazy" src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1200&auto=format&fit=crop" alt=""></div>
+      <div class="content"><h3>Observation des étoiles</h3><p>Ciel noir garanti.</p></div>
+    </article>
   </div>
 </section>
-
-<style>
-.section{padding:40px 0}
-.grid{display:grid;gap:16px}
-.grid-3{grid-template-columns:repeat(3,1fr)}
-@media(max-width:900px){.grid-3{grid-template-columns:1fr 1fr}}
-@media(max-width:620px){.grid-3{grid-template-columns:1fr}}
-.card{overflow:hidden;border-radius:20px;position:relative}
-.card img{width:100%;height:240px;object-fit:cover;display:block;transition:transform .6s ease, filter .6s ease}
-.card:hover img{transform:scale(1.06);filter:saturate(1.05)}
-.card .label{position:absolute;left:14px;bottom:14px;background:rgba(27,79,70,.76);color:#e8faf4;padding:.5rem .75rem;border-radius:999px;font-weight:700}
-</style>
