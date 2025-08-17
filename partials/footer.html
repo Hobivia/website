@@ -1,58 +1,162 @@
-<footer class="container">
-  <div class="footer-top glass">
+<!-- FOOTER — glass + menu + réseaux + formulaire de contact (mailto) -->
+<style>
+  .hbv-footer {
+    margin-top: 28px;
+    color: #EDE6DA;
+    background: rgba(255,255,255,.06);
+    border-top: 1px solid rgba(255,255,255,.18);
+    backdrop-filter: blur(10px);
+  }
+  .hbv-footer .wrap {
+    max-width: 1200px; margin: 0 auto;
+    padding: 24px 16px; display: grid; gap: 18px;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 900px) {
+    .hbv-footer .wrap { grid-template-columns: 1.1fr .9fr 1fr; align-items: start; }
+  }
+
+  /* Bloc marque */
+  .hbv-brand { display:flex; align-items:center; gap:10px }
+  .hbv-brand img { height: 30px; display:block }
+  .hbv-small { opacity:.75; font-size:.95rem }
+
+  /* Menu */
+  .hbv-menu h3,
+  .hbv-contact h3 { margin: 0 0 10px; font-family: "Space Grotesk", Inter, system-ui, sans-serif; }
+  .hbv-menu ul { list-style:none; padding:0; margin:0; display:grid; gap:8px }
+  .hbv-menu a {
+    color:#EDE6DA; text-decoration:none; padding:8px 10px; border-radius:12px;
+    border:1px solid transparent; display:inline-block;
+    background: rgba(255,255,255,0); transition: background .2s, border-color .2s, transform .15s;
+  }
+  .hbv-menu a:hover { border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.06); transform: translateY(-1px); }
+
+  /* Contact form (glass) */
+  .hbv-form {
+    display:grid; gap:10px; padding:12px; border-radius:16px;
+    border:1px solid rgba(255,255,255,.22); background: rgba(0,0,0,.35);
+    backdrop-filter: blur(8px);
+  }
+  .hbv-input, .hbv-textarea {
+    width:100%; color:#EDE6DA; background: rgba(0,0,0,.55);
+    border:1px solid rgba(255,255,255,.25); border-radius:12px; padding:10px;
+  }
+  .hbv-textarea { min-height: 110px; resize: vertical; }
+  .hbv-submit {
+    appearance:none; cursor:pointer; font-weight:600; color:#fff;
+    padding:10px 14px; border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    border:1px solid rgba(255,255,255,.28); box-shadow: 0 6px 22px rgba(0,0,0,.28);
+    transition: transform .12s ease, box-shadow .2s ease;
+  }
+  .hbv-submit:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(0,0,0,.35); }
+
+  /* Réseaux */
+  .hbv-social { display:flex; align-items:center; gap:10px; margin-top:6px }
+  .hbv-social a {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border-radius:12px;
+    border:1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.06);
+    transition: transform .12s, background .2s, border-color .2s;
+  }
+  .hbv-social a:hover { transform: translateY(-1px); background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); }
+  .hbv-social svg { width:20px; height:20px; fill:#EDE6DA }
+
+  /* Bas de page */
+  .hbv-bottom {
+    border-top:1px solid rgba(255,255,255,.14);
+    padding:12px 16px; display:flex; gap:10px; justify-content:space-between; align-items:center;
+  }
+  .muted { opacity:.7; }
+</style>
+
+<footer class="hbv-footer" id="contact">
+  <div class="wrap">
+    <!-- Col 1 : Marque + réseaux -->
     <div>
-      <h3>Hobivia</h3>
-      <p class="footer-note">Le meilleur des hébergements de passions. Trouve un lieu pensé pour ce que tu aimes faire.</p>
-      <div class="footer-links">
-        <div>
-          <strong>Pages</strong><br>
-          <a href="index.html">Accueil</a><br>
-          <a href="peche.html">Pêche</a><br>
-          <a href="destinations.html">Destinations</a><br>
-          <a href="logement.html?id=1">Logement</a>
-        </div>
-        <div>
-          <strong>Réseaux</strong><br>
-          <a href="#">Instagram</a><br>
-          <a href="#">TikTok</a><br>
-          <a href="#">YouTube</a>
-        </div>
-        <div>
-          <strong>Légal</strong><br>
-          <a href="#">Mentions</a><br>
-          <a href="#">CGU</a><br>
-          <a href="#">Presse</a>
-        </div>
+      <div class="hbv-brand">
+        <img src="images/logo-hobivia.png" alt="Hobivia">
+        <strong>Hobivia</strong>
+      </div>
+      <p class="hbv-small" style="margin:10px 0 0">
+        Lieux uniques, expériences locales, hébergements pensés pour tes passions.
+      </p>
+      <div class="hbv-social" aria-label="Réseaux sociaux">
+        <a href="#" aria-label="Instagram" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.3 2.4.5.6.2 1 .5 1.5 1 .5.5.8.9 1 1.5.2.5.4 1.2.5 2.4.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.9-.5 2.4-.2.6-.5 1-1 1.5-.5.5-.9.8-1.5 1-.5.2-1.2.4-2.4.5-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.3-2.4-.5-.6-.2-1-.5-1.5-1-.5-.5-.8-.9-1-1.5-.2-.5-.4-1.2-.5-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.9.5-2.4.2-.6.5-1 1-1.5.5-.5.9-.8 1.5-1 .5-.2 1.2-.4 2.4-.5C8.4 2.2 8.8 2.2 12 2.2m0-2.2C8.7 0 8.3 0 7 0 5.7.1 4.8.3 4 .6 3.1.9 2.4 1.3 1.7 2 1 2.7.6 3.4.3 4.3.1 5.1 0 6 0 7.3 0 8.6 0 9 0 12s0 3.4.1 4.7c.1 1.3.3 2.2.6 3 .3.9.7 1.6 1.4 2.3.7.7 1.4 1.1 2.3 1.4.8.3 1.7.5 3 .6 1.3.1 1.7.1 4.7.1s3.4 0 4.7-.1c1.3-.1 2.2-.3 3-.6.9-.3 1.6-.7 2.3-1.4.7-.7 1.1-1.4 1.4-2.3.3-.8.5-1.7.6-3 .1-1.3.1-1.7.1-4.7s0-3.4-.1-4.7c-.1-1.3-.3-2.2-.6-3C23.4 1.6 23 1 22.3 0.3 21.6-.4 20.9-.8 20 .6c-.8-.3-1.7-.5-3-.6C15.7 0 15.3 0 12 0z"/><path d="M12 5.8A6.2 6.2 0 1 0 18.2 12 6.2 6.2 0 0 0 12 5.8m0-2.2a8.4 8.4 0 1 1-8.4 8.4A8.4 8.4 0 0 1 12 3.6z"/><circle cx="18.4" cy="5.6" r="1.3"/></svg>
+        </a>
+        <a href="#" aria-label="TikTok" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.5 3a6.5 6.5 0 0 0 .1 1.3 5.7 5.7 0 0 0 2.7 3.9 7.3 7.3 0 0 0 2.2.8v3a8.8 8.8 0 0 1-4.8-1.6v6.2A6.8 6.8 0 1 1 9 9.1v3A3.8 3.8 0 1 0 12.8 16V3z"/></svg>
+        </a>
+        <a href="#" aria-label="YouTube" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.5V8.5l6.3 3.5z"/></svg>
+        </a>
       </div>
     </div>
-    <div>
+
+    <!-- Col 2 : Menu racines -->
+    <nav class="hbv-menu" aria-label="Navigation pied de page">
+      <h3>Explorer</h3>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="explorer.html">Explorer</a></li>
+        <li><a href="peche.html">Activités · Pêche</a></li>
+        <li><a href="index.html#activities">Activités</a></li>
+        <li><a href="index.html#gallery">Galerie</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- Col 3 : Formulaire de contact -->
+    <div class="hbv-contact">
       <h3>Contact</h3>
-      <form id="contact-form">
-        <div class="field"><label>Nom</label><input required placeholder="Votre nom" /></div>
-        <div class="field"><label>Email</label><input type="email" required placeholder="vous@exemple.com" /></div>
-        <div class="field"><label>Message</label><textarea required placeholder="Votre message…"></textarea></div>
-        <button class="btn" type="submit">Envoyer</button>
+      <form class="hbv-form" id="hbv-contact-form">
+        <input class="hbv-input" type="text" name="name" placeholder="Ton nom" aria-label="Nom" required>
+        <input class="hbv-input" type="email" name="email" placeholder="Ton email" aria-label="Email" required>
+        <textarea class="hbv-textarea" name="message" placeholder="Ton message…" aria-label="Message" required></textarea>
+        <button class="hbv-submit" type="submit">Envoyer</button>
+        <div class="muted" id="hbv-form-status" role="status" aria-live="polite" style="min-height:1.2em;"></div>
       </form>
-      <p id="contact-ok" style="display:none;margin-top:10px;color:#0b2f2a">Merci ! Votre message a bien été envoyé (démo).</p>
     </div>
+  </div>
+
+  <div class="hbv-bottom">
+    <div class="muted">© Hobivia</div>
+    <div class="muted">Fait avec ❤️ quelque part dans la nature</div>
   </div>
 </footer>
 
-<style>
-footer{margin-top:28px;padding:28px 0 60px}
-.footer-top{display:grid;gap:18px;grid-template-columns:1.2fr .8fr}
-@media(max-width:980px){.footer-top{grid-template-columns:1fr}}
-.footer-top h3, .footer-note, footer a, label{color:#0b2f2a}
-.footer-links{display:grid;gap:8px;grid-template-columns:repeat(3,1fr)}
-.footer-links a{padding:.35rem .4rem;border-radius:8px}
-.footer-links a:hover{background:rgba(0,0,0,.06)}
-.field{display:grid;margin-bottom:10px}
-input, textarea{border:1px solid var(--glass-brd);background:rgba(255,255,255,.35);padding:.7rem .9rem;border-radius:12px;color:#0b2f2a}
-textarea{min-height:120px;resize:vertical}
-</style>
-
 <script>
-document.getElementById('contact-form')?.addEventListener('submit',e=>{
-  e.preventDefault(); document.getElementById('contact-ok').style.display='block'; e.target.reset();
-});
+  // Envoi via mailto + feedback UX
+  (function(){
+    const form = document.getElementById('hbv-contact-form');
+    const status = document.getElementById('hbv-form-status');
+    if(!form) return;
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name = (fd.get('name')||'').toString().trim();
+      const email = (fd.get('email')||'').toString().trim();
+      const message = (fd.get('message')||'').toString().trim();
+
+      if(!name || !email || !message){
+        status.textContent = "Merci de remplir tous les champs.";
+        return;
+      }
+
+      const to = "hello@hobivia.com"; // change si besoin
+      const subject = encodeURIComponent(`Contact Hobivia — ${name}`);
+      const body = encodeURIComponent(`Nom : ${name}\nEmail : ${email}\n\n${message}`);
+      const href = `mailto:${to}?subject=${subject}&body=${body}`;
+
+      // Ouvre le client mail
+      window.location.href = href;
+
+      // Feedback visuel
+      status.textContent = "Merci ! Si ton application mail ne s’ouvre pas, écris-nous à " + to + ".";
+      form.reset();
+    });
+  })();
 </script>
