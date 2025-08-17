@@ -1,29 +1,69 @@
 <!-- partials/cursor.html -->
 <style>
-  #cursor {
+  #hbv-cursor {
     position: fixed;
     top: 0; left: 0;
     width: 26px; height: 26px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.75);
+    border-radius: 999px;
+    background: rgba(0,0,0,0.78);
     border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: 0 6px 22px rgba(0,0,0,0.35);
     pointer-events: none;
+    z-index: 2147483647; /* devant absolument tout */
     transform: translate(-50%,-50%);
-    z-index: 99999; /* devant absolument tout */
+    transition: width .18s ease, height .18s ease, opacity .18s ease;
+    will-change: transform;
     mix-blend-mode: normal;
     backdrop-filter: blur(4px);
-    transition: width 0.2s ease, height 0.2s ease;
+  }
+  @media (hover: none) { #hbv-cursor { display: none; } }
+
+  /* Effet léger au survol des éléments interactifs */
+  .hbv-cursor--hover {
+    width: 34px !important;
+    height: 34px !important;
   }
 </style>
 
-<div id="cursor"></div>
+<div id="hbv-cursor" aria-hidden="true"></div>
 
 <script>
-(function initCursor(){
-  const dot=document.querySelector('#cursor');
-  if(!dot) return;
-  window.addEventListener('mousemove',e=>{
-    dot.style.transform=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`;
-  });
+(function(){
+  const c = document.getElementById('hbv-cursor');
+  if(!c) return;
+
+  let x = 0, y = 0, tx = 0, ty = 0;
+  const lerp = (a,b,t)=>a+(b-a)*t;
+
+  function raf(){
+    tx = lerp(tx, x, 0.22);
+    ty = lerp(ty, y, 0.22);
+    c.style.transform = `translate(${tx}px, ${ty}px) translate(-50%, -50%)`;
+    requestAnimationFrame(raf);
+  }
+  window.addEventListener('mousemove', e => { x = e.clientX; y = e.clientY; }, { passive:true });
+  raf();
+
+  // Grossissement quand on survole des éléments interactifs
+  const isInteractive = (el) => {
+    if(!el) return false;
+    const tag = el.tagName?.toLowerCase();
+    if (tag === 'a' || tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea') return true;
+    const role = el.getAttribute?.('role');
+    if (role && /button|link|tab|switch|checkbox|menuitem|radio/.test(role)) return true;
+    return window.getComputedStyle(el).cursor === 'pointer';
+  };
+
+  let hover = false;
+  document.addEventListener('mousemove', (e)=>{
+    const target = e.target;
+    const over = isInteractive(target) || isInteractive(target?.closest?.('*'));
+    if (over && !hover){ hover = true; c.classList.add('hbv-cursor--hover'); }
+    else if (!over && hover){ hover = false; c.classList.remove('hbv-cursor--hover'); }
+  }, { passive:true });
+
+  // Sécurité : s’assurer qu’on reste au-dessus (au cas où des z-index délirants apparaissent)
+  const ensureTop = () => { c.style.zIndex = 2147483647; };
+  setInterval(ensureTop, 1000);
 })();
 </script>
