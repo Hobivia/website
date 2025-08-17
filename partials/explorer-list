@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hobivia — Liste des logements</title>
+
+<!-- Police identique à ta charte -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ====== Thème / variables (raccord avec ton index) ====== */
+  :root{
+    --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#111315; --blanc:#fff;
+    --glass:rgba(255,255,255,.12); --brd:rgba(255,255,255,.28); --shadow:0 10px 30px rgba(0,0,0,.25);
+    --badge:rgba(17,19,21,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--noir);color:var(--beige);font-family:Inter,system-ui,Arial,sans-serif}
+  h2, h3{font-family:"Space Grotesk",Inter,system-ui,Arial,sans-serif;margin:0 0 .5rem 0}
+
+  /* ====== Section Liste ====== */
+  section#logements{
+    position:relative;
+    padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 48px) 80px;
+    overflow-x:hidden; /* pour les entrées depuis les côtés */
+  }
+  .header-line{
+    display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:clamp(16px,2vw,24px);
+  }
+  .header-line h2{font-size:clamp(24px,4vw,40px)}
+  .sub{opacity:.75}
+
+  /* Grille responsive */
+  .grid{
+    display:grid;gap:clamp(14px,1.8vw,22px);
+    grid-template-columns: repeat(1, minmax(0,1fr));
+  }
+  @media (min-width:640px){ .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  @media (min-width:1024px){ .grid{ grid-template-columns: repeat(3, minmax(0,1fr)); } }
+  @media (min-width:1440px){ .grid{ grid-template-columns: repeat(4, minmax(0,1fr)); } }
+
+  /* Carte logement */
+  .card{
+    position:relative;border-radius:22px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+    border:1px solid var(--brd); box-shadow:var(--shadow); overflow:hidden; transform:translateY(6px);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, opacity .25s ease;
+    opacity:.92;
+  }
+  .card:hover{ transform:translateY(0px) scale(1.01); box-shadow:0 14px 40px rgba(0,0,0,.35); opacity:1; border-color:rgba(255,255,255,.38);}
+  .media{
+    position:relative; aspect-ratio: 4/3; background:#0f1113; overflow:hidden;
+  }
+  .media img{
+    width:100%; height:100%; object-fit:cover; display:block; filter:saturate(1.05) contrast(1.05);
+    transition: transform .6s ease;
+  }
+  .card:hover .media img{ transform:scale(1.05); }
+  .price-badge{
+    position:absolute; left:12px; top:12px; padding:.45rem .7rem; border-radius:999px;
+    backdrop-filter: blur(8px); background:var(--badge); color:var(--beige); font-weight:600; font-size:.9rem; border:1px solid var(--brd);
+  }
+  .content{ padding:14px 14px 16px 14px; display:grid; gap:8px; }
+  .title{ font-weight:700; font-size:1.05rem; line-height:1.25; }
+  .desc{ font-size:.95rem; opacity:.85; min-height:2.4em; }
+  .actions{ display:flex; gap:.6rem; align-items:center; justify-content:space-between; margin-top:.2rem; }
+
+  /* Bouton glass "Réserver" */
+  .btn{
+    appearance:none; border:none; cursor:pointer; padding:.6rem 1rem; border-radius:14px;
+    background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+    color:var(--blanc); font-weight:600; letter-spacing:.2px; backdrop-filter: blur(10px);
+    border:1px solid var(--brd); box-shadow:0 4px 18px rgba(0,0,0,.25); transition: transform .15s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.35); }
+  .btn:active{ transform:translateY(0); }
+  .ghost{ opacity:.85; font-size:.9rem; }
+
+  /* ====== Animations d’entrée depuis les côtés ====== */
+  .card{
+    --offset: 42px;
+    opacity:0; transform: translateY(10px) translateX(var(--slideX, 0px));
+  }
+  .card[data-side="left"]{ --slideX: calc(var(--offset) * -1); }
+  .card[data-side="right"]{ --slideX: var(--offset); }
+  .card.visible{
+    opacity:1; transform: translateY(0) translateX(0);
+    transition: transform .7s cubic-bezier(.22,1,.36,1), opacity .6s ease;
+  }
+
+  /* Effet “fade-out” progressif quand on scrolle (subtil) */
+  .card{
+    will-change: transform, opacity; 
+  }
+  .card.scrolling-out{
+    opacity:.5; filter:saturate(.95);
+  }
+
+  /* ====== Curseur glass sombre ====== */
+  .glass-cursor{
+    position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px; pointer-events:none; z-index:9999;
+    background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 100%);
+    border:1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px);
+    transform: translate(-50%,-50%); transition: width .2s ease, height .2s ease, background .25s ease, transform .05s linear;
+    mix-blend-mode: screen;
+  }
+  @media (hover:none){ .glass-cursor{ display:none; } }
+  a, .btn{ position:relative; z-index:1; }
+
+  /* Utilitaire ligne clamp */
+  .line-2{
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== SECTION LISTE À INSÉRER SOUS TA MAP ====== -->
+<section id="logements" aria-labelledby="logements-title">
+  <div class="header-line">
+    <h2 id="logements-title">Nos logements</h2>
+    <span class="sub">Sélection aléatoire à chaque visite</span>
+  </div>
+  <div id="grid" class="grid" role="list"></div>
+</section>
+
+<!-- Curseur glass sombre -->
+<div class="glass-cursor" id="glassCursor" aria-hidden="true"></div>
+
+<script>
+/* ========= Utilitaires ========= */
+const $ = (sel, ctx=document) => ctx.querySelector(sel);
+const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+/* Shuffle de Fisher–Yates */
+function shuffle(array){
+  for (let i = array.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+/* Mappeur tolérant selon les clés possibles du JSON */
+function normalizeItem(raw){
+  const name = raw.name || raw.title || raw.nom || "Logement";
+  const short = raw.shortDescription || raw.short_desc || raw.description_short || raw.description || "";
+  const price = raw.priceFrom || raw.price_from || raw.from || raw.price || raw.tarif || null;
+  // Images: array de strings, array d'objets {url}, ou string simple
+  let images = [];
+  if (Array.isArray(raw.images)) {
+    images = raw.images.map(img => (typeof img === 'string' ? img : (img.url || img.src))).filter(Boolean);
+  } else if (raw.image) {
+    images = [raw.image];
+  } else if (raw.cover || raw.photo) {
+    images = [raw.cover || raw.photo];
+  }
+  // Lien de résa s'il existe
+  const bookingUrl = raw.bookingUrl || raw.link || raw.url || '#';
+  return { name, short, price, images, bookingUrl, raw };
+}
+
+/* Crée la carte DOM */
+function createCard(item, idx){
+  const side = idx % 2 === 0 ? 'left' : 'right';
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.setAttribute('role','listitem');
+  card.dataset.side = side;
+
+  const imgSrc = item.images?.[0] || 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1400&auto=format&fit=crop'; // fallback
+  const alt = `Photo - ${item.name}`;
+
+  card.innerHTML = `
+    <div class="media">
+      <img src="${imgSrc}" alt="${alt}" loading="lazy" decoding="async">
+      ${item.price ? `<div class="price-badge">À partir de ${formatPrice(item.price)}</div>` : ``}
+    </div>
+    <div class="content">
+      <h3 class="title">${escapeHTML(item.name)}</h3>
+      <p class="desc line-2">${escapeHTML(item.short || '')}</p>
+      <div class="actions">
+        <button class="btn" data-action="book">Réserver</button>
+        <span class="ghost">Découvrir</span>
+      </div>
+    </div>
+  `;
+
+  // Clic sur “Réserver” -> vers bookingUrl (si disponible)
+  card.querySelector('[data-action="book"]').addEventListener('click', (e) => {
+    if(item.bookingUrl && item.bookingUrl !== '#'){
+      window.open(item.bookingUrl, '_blank', 'noopener');
+    } else {
+      // À défaut, tu pourras ici ouvrir un modal interne
+      alert('Lien de réservation indisponible pour ce logement.');
+    }
+  });
+
+  return card;
+}
+
+/* Format prix – accepte number ou string */
+function formatPrice(p){
+  if (p == null) return '';
+  const num = Number(String(p).replace(/[^\d.,-]/g,'').replace(',', '.'));
+  if (!isFinite(num)) return String(p);
+  return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR', maximumFractionDigits:0 }).format(num);
+}
+
+/* Sécurité simple HTML */
+function escapeHTML(str=''){
+  return str.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+
+/* ========= Animations à l’entrée + “fade-out” au scroll ========= */
+const io = new IntersectionObserver((entries)=>{
+  for(const entry of entries){
+    const el = entry.target;
+    if(entry.isIntersecting){
+      el.classList.add('visible');
+      el.classList.remove('scrolling-out');
+    }else{
+      // quand l’élément sort vers le haut, on ajoute un léger fade
+      const rect = el.getBoundingClientRect();
+      if(rect.top < 0) el.classList.add('scrolling-out');
+      else el.classList.remove('scrolling-out');
+    }
+  }
+},{ root:null, rootMargin:'0px 0px -10% 0px', threshold:.15 });
+
+/* ========= Curseur glass sombre ========= */
+(function glassCursor(){
+  const c = $('#glassCursor');
+  let x=0, y=0, tx=0, ty=0;
+  const lerp = (a,b,t)=>a+(b-a)*t;
+  const raf = () => {
+    tx = lerp(tx, x, 0.2);
+    ty = lerp(ty, y, 0.2);
+    c.style.transform = `translate(${tx - 0}px, ${ty - 0}px) translate(-50%, -50%)`;
+    requestAnimationFrame(raf);
+  };
+  window.addEventListener('mousemove', (e)=>{ x=e.clientX; y=e.clientY; });
+  raf();
+})();
+
+/* ========= Chargement du JSON + rendu ========= */
+(async function init(){
+  try{
+    // IMPORTANT : on lit la version locale pour ton site
+    const res = await fetch('data/hobivia-global.json', { cache:'no-store' });
+    if(!res.ok) throw new Error('Impossible de charger data/hobivia-global.json');
+    const data = await res.json();
+
+    // Accepte array direct ou data.items
+    const rawItems = Array.isArray(data) ? data : (Array.isArray(data.items) ? data.items : Object.values(data));
+    if(!rawItems || !rawItems.length) throw new Error('Aucune donnée logement dans le JSON.');
+
+    const items = shuffle(rawItems.map(normalizeItem));
+    const grid = $('#grid');
+
+    // Render
+    const frag = document.createDocumentFragment();
+    items.forEach((it, idx)=>{
+      const card = createCard(it, idx);
+      frag.appendChild(card);
+      io.observe(card);
+    });
+    grid.innerHTML = '';
+    grid.appendChild(frag);
+
+  }catch(err){
+    console.error(err);
+    $('#grid').innerHTML = `
+      <div style="padding:18px;border:1px solid var(--brd);border-radius:16px;background:rgba(255,255,255,.06)">
+        <strong>Erreur de chargement</strong><br/>
+        Vérifie le chemin <code>data/hobivia-global.json</code> et le format attendu.
+      </div>`;
+  }
+})();
+</script>
+</body>
+</html>
