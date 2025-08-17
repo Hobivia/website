@@ -1,71 +1,27 @@
-<section class="container">
-  <div class="hero">
-    <div class="inner reveal">
+<!-- HERO (image + CTA, typographies ok) -->
+<style>
+  .hbv-hero{max-width:1200px;margin:18px auto 10px;border-radius:28px;overflow:hidden;position:relative}
+  .hbv-hero .img{
+    background-image:url('https://images.unsplash.com/photo-1469796466635-455ede028aca?q=80&w=1800&auto=format&fit=crop');
+    background-size:cover;background-position:center;height:420px;filter:contrast(1.05) saturate(1.05)}
+  .hbv-hero .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55))}
+  .hbv-hero .content{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#EDE6DA;padding:24px}
+  .hbv-hero h1{font-family:"Space Grotesk",Inter,system-ui,sans-serif;font-size:clamp(26px,5vw,52px);margin:0 0 10px}
+  .hbv-hero p{max-width:740px;margin:0 auto 18px;opacity:.9}
+  .hbv-btn{appearance:none;border:none;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.06));
+    color:#fff;padding:12px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(10px);
+    box-shadow:0 6px 24px rgba(0,0,0,.35);cursor:pointer;font-weight:600}
+  .hbv-btn:hover{transform:translateY(-1px)}
+</style>
+
+<section class="hbv-hero reveal">
+  <div class="img"></div>
+  <div class="overlay"></div>
+  <div class="content">
+    <div>
       <h1>Ton activité, ton hébergement de rêve</h1>
-      <p>Découvre des tiny houses et logements insolites pensés pour tes passions, au cœur de lieux exceptionnels.</p>
-      <!-- 👉 le lien pointe vers explorer.html -->
-      <a class="btn" href="explorer.html">Explorer</a>
+      <p>Découvre des logements insolites pensés pour tes passions, au cœur de lieux exceptionnels.</p>
+      <a href="explorer.html"><button class="hbv-btn">Explorer</button></a>
     </div>
   </div>
 </section>
-
-<style>
-.hero{
-  position:relative;
-  margin:20px 0;
-  border-radius:26px;
-  overflow:hidden;
-  min-height:65vh;
-  display:grid;
-  place-items:center;
-  text-align:center;
-  color:#fdf8f4;
-}
-
-/* Image depuis Vercel (chemin absolu depuis la racine du site) */
-.hero::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(0deg, rgba(0,0,0,.25), rgba(0,0,0,.15)),
-    url('/images/pexels-alex-andrews-271121-833191.jpg') center/cover no-repeat;
-  transform:scale(1);
-  transition:transform 4s ease;   /* zoom très doux */
-  will-change: transform;
-}
-.hero:hover::before{ transform:scale(1.05); }
-
-.hero .inner{ position:relative; z-index:1; padding:2rem; }
-.hero h1{
-  font-size:clamp(32px,5vw,56px);
-  color:#ffecd1;                 /* teinte plus chaleureuse */
-  text-shadow:0 4px 16px rgba(0,0,0,.30);
-}
-.hero p{
-  color:#fff4e9;
-  max-width:720px;
-  margin:14px auto 24px;
-  font-size:1.1rem;
-  line-height:1.6;
-}
-
-/* Bouton premium */
-.btn{
-  display:inline-block;
-  background:#D07B4E;
-  color:#fff;
-  padding:.85rem 1.6rem;
-  border-radius:50px;
-  font-weight:700;
-  font-size:1.05rem;
-  text-decoration:none;
-  box-shadow:0 4px 14px rgba(0,0,0,.15);
-  transition:transform .3s ease, box-shadow .3s ease, background .3s ease;
-}
-.btn:hover{
-  transform:translateY(-2px) scale(1.03);
-  box-shadow:0 8px 22px rgba(0,0,0,.25);
-  background:#b8673f;            /* léger assombrissement au hover */
-}
-</style>
