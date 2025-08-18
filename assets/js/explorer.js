@@ -1,188 +1,135 @@
-/* global L */
-const Explorer = (() => {
-  let state = {
-    items: [],
-    filtered: [],
-    markers: [],
-    map: null,
-    presetCategory: null
-  };
+// assets/js/explorer.js
+// Branche le front sur l'endpoint Vercel /api/lodgings
 
-  const els = {
-    grid: null, q: null, category: null, reset: null, count: null, mapEl: null
-  };
-
-  async function init({ presetCategory = null } = {}){
-    // bind DOM
-    els.grid = document.getElementById('grid');
-    els.q = document.getElementById('q');
-    els.category = document.getElementById('category');
-    els.reset = document.getElementById('reset');
-    els.count = document.getElementById('count');
-    els.mapEl = document.querySelector('.hbv-map');
-
-    state.presetCategory = presetCategory;
-
-    // Pré-sélection catégorie si page activité
-    if (presetCategory && els.category){
-      els.category.value = presetCategory;
-      els.category.setAttribute('disabled','disabled'); // garde la toolbar cohérente sans permettre de dériver
-    }
-
-    // Map
-    if (els.mapEl){
-      state.map = L.map(els.mapEl, { scrollWheelZoom:false }).setView([46.8, 2.3], 5);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19, attribution: '&copy; OpenStreetMap'
-      }).addTo(state.map);
-    }
-
-    // Events
-    if(els.q) els.q.addEventListener('input', debounce(applyFilters, 250));
-    if(els.category && !presetCategory) els.category.addEventListener('change', applyFilters);
-    if(els.reset) els.reset.addEventListener('click', () => {
-      if(els.q){ els.q.value = ''; }
-      if(els.category && !presetCategory){ els.category.value=''; }
-      applyFilters();
-    });
-
-    // Fetch
-    await fetchAndRender();
+export function formatPrice(value) {
+  try {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value || 0);
+  } catch {
+    return `${value} €`;
   }
+}
 
-  async function fetchAndRender(){
-    const params = new URLSearchParams();
-    if (state.presetCategory) params.set('category', state.presetCategory);
-    params.set('limit','200');
-    const url = '/.netlify/functions/lodgings' + (params.toString()?`?${params.toString()}`:'');
-    const res = await fetch(url);
-    const data = await res.json();
-    state.items = Array.isArray(data.items) ? data.items : [];
-    applyFilters(/* shuffle on first render */ true);
+export function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+}
 
-  function applyFilters(shuffleFirst = false){
-    const q = (els.q?.value || '').trim().toLowerCase();
-    const category = state.presetCategory || (els.category?.value || '').trim();
-    let arr = state.items.slice(0);
+export async function fetchLodgings({ category = '', search = '', limit = 200, skip = 0 } = {}) {
+  const params = new URLSearchParams();
+  if (category) params.set('category', category);
+  if (search) params.set('search', search);
+  params.set('limit', String(limit));
+  params.set('skip', String(skip));
 
-    if (category) arr = arr.filter(x => (x.category || '').toLowerCase() === category);
-    if (q){
-      arr = arr.filter(x => {
-        const hay = `${x.title} ${x.shortDescription||''} ${x.location?.city||''}`.toLowerCase();
-        return hay.includes(q);
-      });
-    }
+  const res = await fetch(`/api/lodgings?${params.toString()}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
+  return res.json(); // { total, items: [...] }
+}
 
-    // Shuffle par défaut
-    if (shuffleFirst) arr = shuffle(arr);
-
-    state.filtered = arr;
-    render();
-    updateMap();
-    updateCount();
-  }
-
-  function render(){
-    if (!els.grid) return;
-    els.grid.innerHTML = '';
-    const frag = document.createDocumentFragment();
-    let side = 'left';
-    const observer = new IntersectionObserver((entries) => {
-      for (const e of entries){
-        if (e.isIntersecting){
-          e.target.classList.add('reveal-visible');
-          observer.unobserve(e.target);
-        }
+function createObserver() {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.remove('reveal-hidden');
+        e.target.classList.add('reveal-visible');
+        io.unobserve(e.target);
       }
-    }, { rootMargin:'0px 0px -10% 0px', threshold:0.1 });
+    });
+  }, { threshold: 0.12 });
+  return io;
+}
 
-    for (const item of state.filtered){
-      const card = document.createElement('article');
-      card.className = 'card-lodging glass reveal-hidden';
-      card.setAttribute('data-side', side);
-      side = (side === 'left' ? 'right' : 'left');
+function renderMarkers(map, items) {
+  if (!map) return;
+  if (map.__markers) {
+    map.__markers.forEach(m => m.remove());
+    map.__markers = [];
+  }
+  map.__markers = [];
+  items.forEach(it => {
+    if (!it.location || typeof it.location.lat !== 'number' || typeof it.location.lng !== 'number') return;
+    const marker = L.marker([it.location.lat, it.location.lng]).addTo(map);
+    marker.bindPopup(`<strong>${it.title}</strong><br>${it.location.city || ''} ${it.location.region || ''}`);
+    map.__markers.push(marker);
+  });
+}
 
-      const media = document.createElement('div');
-      media.className = 'media';
-      const img = document.createElement('img');
-      img.loading = 'lazy'; img.decoding = 'async';
-      img.alt = `Photo de ${item.title}`;
-      img.src = (item.images && item.images[0]) || 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1200&auto=format&fit=crop';
-      media.appendChild(img);
+export async function renderLodgings(items) {
+  const grid = document.querySelector('.grid-lodgings');
+  if (!grid) return;
 
-      const body = document.createElement('div');
-      body.className = 'body';
-      const h = document.createElement('h3');
-      h.className = 'h3'; h.textContent = item.title;
-      const p = document.createElement('p');
-      p.className = 'muted'; p.textContent = item.shortDescription || '';
-      body.appendChild(h); body.appendChild(p);
+  grid.innerHTML = '';
+  const io = createObserver();
 
-      const meta = document.createElement('div');
-      meta.className = 'meta';
-      const price = document.createElement('span');
-      price.className = 'badge price';
-      price.textContent = `À partir de ${new Intl.NumberFormat('fr-FR').format(item.priceFrom)} €`;
+  shuffle(items).forEach((it, idx) => {
+    const side = idx % 2 === 0 ? 'left' : 'right';
+    const el = document.createElement('article');
+    el.className = 'card-lodging glass reveal-hidden';
+    el.setAttribute('data-side', side);
+    el.innerHTML = `
+      <div class="media">
+        ${it.images?.[0] ? `<img src="${it.images[0]}" alt="${it.title}" loading="lazy" decoding="async">` : ''}
+      </div>
+      <div class="body">
+        <h3 class="h3">${it.title}</h3>
+        <p class="muted">${it.shortDescription || ''}</p>
+      </div>
+      <div class="meta">
+        <span class="badge price">À partir de ${formatPrice(it.priceFrom)}</span>
+        ${it.bookingUrl ? `<a class="btn" href="${it.bookingUrl}" target="_blank" rel="noopener" aria-label="Réserver ${it.title}">Réserver</a>` : ''}
+      </div>
+    `;
+    grid.appendChild(el);
+    io.observe(el);
+  });
+}
 
-      const cta = document.createElement('a');
-      cta.className = 'btn btn-cta';
-      cta.href = item.bookingUrl || '#';
-      cta.target = '_blank'; cta.rel = 'noopener';
-      cta.setAttribute('aria-label', `Réserver ${item.title}`);
-      cta.textContent = 'Réserver';
+function initMap() {
+  const mapEl = document.getElementById('hbv-map');
+  if (!mapEl) return null;
+  const map = L.map(mapEl, { scrollWheelZoom: false }).setView([46.8, 2.3], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  return map;
+}
 
-      meta.appendChild(price);
-      meta.appendChild(cta);
+export async function initExplorer({ presetCategory = '' } = {}) {
+  const map = initMap();
 
-      // Lien vers fiche optionnelle
-      const titleLink = document.createElement('a');
-      titleLink.href = `logement.html?id=${encodeURIComponent(item.id)}`;
-      titleLink.setAttribute('aria-label', `Voir la fiche de ${item.title}`);
-      titleLink.style.textDecoration = 'none';
-      h.prepend(titleLink);
-      titleLink.append(h.childNodes[1]); // place le texte dans le lien
+  const searchInput = document.getElementById('searchInput');
+  const categorySelect = document.getElementById('categorySelect');
+  const resetBtn = document.getElementById('resetBtn');
 
-      card.appendChild(media);
-      card.appendChild(body);
-      card.appendChild(meta);
-      frag.appendChild(card);
-
-      observer.observe(card);
-    }
-    els.grid.appendChild(frag);
+  if (presetCategory) {
+    const opt = [...categorySelect.options].find(o => o.value === presetCategory);
+    if (opt) opt.selected = true;
   }
 
-  function updateMap(){
-    if (!state.map) return;
-    // clear
-    state.markers.forEach(m => m.remove());
-    state.markers = [];
-    for (const item of state.filtered){
-      if (!item.location) continue;
-      const marker = L.marker([item.location.lat, item.location.lng]).addTo(state.map);
-      marker.bindPopup(`<strong>${item.title}</strong><br>${item.location.city||''}`);
-      state.markers.push(marker);
-    }
+  async function load() {
+    const category = categorySelect.value || '';
+    const search = (searchInput.value || '').trim();
+    const data = await fetchLodgings({ category, search, limit: 200, skip: 0 });
+    renderLodgings(data.items || []);
+    renderMarkers(map, data.items || []);
   }
 
-  function updateCount(){
-    if (!els.count) return;
-    els.count.textContent = `${state.filtered.length} logement${state.filtered.length>1?'s':''}`;
-  }
+  let t;
+  searchInput.addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(load, 250);
+  });
+  categorySelect.addEventListener('change', load);
+  resetBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    categorySelect.value = presetCategory || '';
+    load();
+  });
 
-  function shuffle(arr){
-    // Fisher–Yates
-    for(let i = arr.length - 1; i > 0; i--){
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-
-  function debounce(fn, ms){
-    let t; return (...args) => { clearTimeout(t); t = setTimeout(()=>fn(...args), ms); };
-  }
-
-  return { init };
-})();
+  await load();
+}
