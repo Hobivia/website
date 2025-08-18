@@ -1,9 +1,9 @@
 /* ========== Design system ========== */
 :root{
-  --hbv-noir:#111315;
-  --hbv-beige:#EDE6DA;
-  --hbv-cta:#D07B4E;
-  --hbv-brd:rgba(255,255,255,.22);
+  --hbv-noir:#F7F6F2;   /* blanc cassé (fond principal) */
+  --hbv-beige:#2A2D2F;  /* texte sombre */
+  --hbv-cta:#D07B4E;    /* inchangé (CTA orange/brun) */
+  --hbv-brd:rgba(0,0,0,.18); /* bordure glass plus sombre */
 
   --radius:20px;
   --glass-bg:rgba(255,255,255,.08);
