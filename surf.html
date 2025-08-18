@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Surf — Hobivia</title>
+  <meta name="description" content="Lodges Hobivia pour le surf : carte + liste filtrée.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main id="content" tabindex="-1">
+    <div data-include="partials/cursor.html"></div>
+    <section class="section">
+      <header class="category-hero glass">
+        <h1 class="h1">Surf</h1>
+        <p class="muted">Lodges proches des meilleurs spots de vagues.</p>
+      </header>
+      <div data-include="partials/map.html"></div>
+      <div data-include="partials/explorer-list.html"></div>
+    </section>
+  </main>
+  <div data-include="partials/footer.html"></div>
+
+  <script src="assets/js/partials-loader.js"></script>
+  <script src="assets/js/explorer.js"></script>
+  <script>
+    includePartials().then(() => {
+      const leafletJS = document.createElement('script');
+      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      leafletJS.onload = () => Explorer.init({ presetCategory: 'surf' });
+      document.body.appendChild(leafletJS);
+    });
+  </script>
+</body>
+</html>
