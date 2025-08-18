@@ -59,7 +59,7 @@ async function fetchContentful(limit = 200, skip = 0){
         }
       }
     }`;
-  const res = await fetch(GRAPHQL_ENDPOINT, {
+  const res = await fetch('/api/lodgings?category=surf&limit=200');
     method:'POST',
     headers:{
       'Content-Type':'application/json',
