@@ -3,44 +3,63 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Hobivia – Accueil</title>
-
+  <title>Hobivia — Nature, Aventures & Lodges en France</title>
+  <meta name="description" content="Hobivia : découvrez des lodges sélectionnés pour la pêche, la randonnée et le surf. Carte interactive, critères clairs, témoignages et galerie.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* Optionnel : skeletons légers */
-    .skeleton{position:relative;overflow:hidden;background:rgba(255,255,255,.06);border-radius:18px}
-    .skeleton::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
-      animation:shimmer 1.15s infinite}
-    @keyframes shimmer{100%{transform:translateX(100%)}}
-  </style>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <!-- Leaflet (carte Accueil) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsKZ8Jb+8=" crossorigin=""/>
 </head>
 <body>
-  <div data-include="partials/header.html" class="skeleton"></div>
-  <div data-include="partials/hero.html" class="skeleton"></div>
+  <!-- Partials -->
+  <div data-include="partials/header.html"></div>
+  <main id="content" tabindex="-1">
+    <div data-include="partials/cursor.html"></div>
+    <div data-include="partials/hero.html"></div>
+    <div data-include="partials/map.html"></div>
+    <div data-include="partials/activities.html"></div>
+    <div data-include="partials/testimonials.html"></div>
+    <div data-include="partials/criteria.html"></div>
+    <div data-include="partials/gallery.html"></div>
+  </main>
+  <div data-include="partials/footer.html"></div>
 
-  <div class="glass" style="padding:8px;border-radius:22px">
-    <iframe src="partials/map.html"
-            style="width:100%;height:600px;border:0;border-radius:18px;overflow:hidden;position:relative;z-index:1;"
-            loading="lazy"></iframe>
-  </div>
+  <script src="assets/js/partials-loader.js"></script>
+  <script>
+    // Charge les partials puis initialise la carte d'accueil avec quelques marqueurs seed
+    includePartials().then(async () => {
+      // Feuilles Leaflet JS après injection du DOM
+      const leafletJS = document.createElement('script');
+      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      leafletJS.integrity = "sha256-o9N1j7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsKZ8Jb+8=";
+      leafletJS.crossOrigin = "";
+      leafletJS.onload = initHomeMap;
+      document.body.appendChild(leafletJS);
 
-  <div data-include="partials/activities.html" class="skeleton"></div>
-  <div data-include="partials/testimonials.html" class="skeleton"></div>
-  <div data-include="partials/criteria.html" class="skeleton"></div>
-  <div data-include="partials/gallery.html" class="skeleton"></div>
-  <div data-include="partials/footer.html" class="skeleton"></div>
+      async function initHomeMap(){
+        const mapEl = document.querySelector('.hbv-map');
+        if(!mapEl) return;
+        const map = L.map(mapEl, { scrollWheelZoom: false }).setView([46.8, 2.3], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap'
+        }).addTo(map);
 
-  <!-- Curseur global (toujours injecté en dernier pour dominer le z-index) -->
-  <div data-include="partials/cursor.html"></div>
-
-  <script type="module">
-    import { includePartials } from './assets/js/partials-loader.js';
-
-    // Charge tous les partials puis retire la classe skeleton
-    includePartials().then(()=>{
-      document.querySelectorAll('.skeleton').forEach(n=>n.classList.remove('skeleton'));
+        // Prend 6 premiers logements du seed pour demo page accueil (fallback local)
+        try {
+          const res = await fetch('/.netlify/functions/lodgings?limit=6');
+          const data = await res.json();
+          (data.items || []).forEach(item => {
+            if(!item.location) return;
+            const m = L.marker([item.location.lat, item.location.lng]).addTo(map);
+            m.bindPopup(`<strong>${item.title}</strong><br>${item.location.city || ''}`);
+          });
+        } catch(e){
+          // silencieux si non dispo en local
+        }
+      }
     });
   </script>
 </body>
