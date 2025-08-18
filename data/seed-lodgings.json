@@ -1,0 +1,127 @@
+{
+  "total": 9,
+  "items": [
+    {
+      "id": "seed-peche-1",
+      "title": "Cabane du Lac",
+      "shortDescription": "Bord de lac, barque incluse.",
+      "description": "Une cabane chaleureuse au bord d’un lac poissonneux.",
+      "category": "peche",
+      "location": {"lat": 45.778, "lng": 3.086, "city":"Clermont-Ferrand", "region":"Auvergne", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1464618663641-bbdd760ae84a?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 110,
+      "bookingUrl": "https://example.com/book/cabane-du-lac",
+      "featured": true
+    },
+    {
+      "id": "seed-peche-2",
+      "title": "Maison de Rivière",
+      "shortDescription": "Accès direct à la rivière.",
+      "description": "Spot parfait pour la pêche à la truite.",
+      "category": "peche",
+      "location": {"lat": 44.84, "lng": -0.58, "city":"Bordeaux", "region":"Nouvelle-Aquitaine", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 95,
+      "bookingUrl": "https://example.com/book/maison-riviere"
+    },
+    {
+      "id": "seed-peche-3",
+      "title": "Gîte Estuaire",
+      "shortDescription": "Entre mer et eau douce.",
+      "description": "Idéal pour varier les techniques.",
+      "category": "peche",
+      "location": {"lat": 45.616, "lng": -1.033, "city":"Royan", "region":"Charente-Maritime", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 120,
+      "bookingUrl": "https://example.com/book/gite-estuaire"
+    },
+
+    {
+      "id": "seed-rando-1",
+      "title": "Chalet des Cimes",
+      "shortDescription": "Au départ de sentiers alpins.",
+      "description": "Vue imprenable et itinéraires balisés.",
+      "category": "randonnee",
+      "location": {"lat": 45.923, "lng": 6.869, "city":"Chamonix", "region":"Haute-Savoie", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 140,
+      "bookingUrl": "https://example.com/book/chalet-cimes",
+      "featured": true
+    },
+    {
+      "id": "seed-rando-2",
+      "title": "Lodge des Landes",
+      "shortDescription": "Forêt et dunes.",
+      "description": "Randos entre pins et océan.",
+      "category": "randonnee",
+      "location": {"lat": 44.407, "lng": -1.104, "city":"Mimizan", "region":"Landes", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 105,
+      "bookingUrl": "https://example.com/book/lodge-landes"
+    },
+    {
+      "id": "seed-rando-3",
+      "title": "Maison des Causses",
+      "shortDescription": "Plateaux et gorges.",
+      "description": "Grands espaces et silence.",
+      "category": "randonnee",
+      "location": {"lat": 44.519, "lng": 3.5, "city":"Mende", "region":"Lozère", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1437623889155-075d40e2e59f?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 88,
+      "bookingUrl": "https://example.com/book/maison-causses"
+    },
+
+    {
+      "id": "seed-surf-1",
+      "title": "Bungalow Côte des Basques",
+      "shortDescription": "Spot mythique à pied.",
+      "description": "Idéal pour longboard et sunsets.",
+      "category": "surf",
+      "location": {"lat": 43.478, "lng": -1.558, "city":"Biarritz", "region":"Pyrénées-Atlantiques", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1503694978374-8a2fa686963a?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 150,
+      "bookingUrl": "https://example.com/book/bungalow-cdb",
+      "featured": true
+    },
+    {
+      "id": "seed-surf-2",
+      "title": "Villa Hossegor",
+      "shortDescription": "Entre lac et océan.",
+      "description": "Vagues puissantes, nature luxuriante.",
+      "category": "surf",
+      "location": {"lat": 43.664, "lng": -1.427, "city":"Hossegor", "region":"Landes", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 185,
+      "bookingUrl": "https://example.com/book/villa-hossegor"
+    },
+    {
+      "id": "seed-surf-3",
+      "title": "Cabane Crozon",
+      "shortDescription": "Falaises et beach breaks.",
+      "description": "Bretagne sauvage et authentique.",
+      "category": "surf",
+      "location": {"lat": 48.24, "lng": -4.49, "city":"Crozon", "region":"Finistère", "country":"France"},
+      "images": [
+        "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1600&auto=format&fit=crop"
+      ],
+      "priceFrom": 99,
+      "bookingUrl": "https://example.com/book/cabane-crozon"
+    }
+  ]
+}
