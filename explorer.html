@@ -3,208 +3,37 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Hobivia — Explorer</title>
-
-  <!-- Pré-chargements / cohérence avec index -->
+  <title>Explorer — Hobivia</title>
+  <meta name="description" content="Explorer : carte + liste des logements Hobivia. Filtre par activité, recherche, réservation.">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-
-  <!-- (Sécurité) Leaflet si la map partial en dépend -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <style>
-    :root{
-      --vert:#1B4F46; --beige:#EDE6DA; --cta:#D07B4E; --noir:#111315; --blanc:#fff;
-      --glass:rgba(255,255,255,.12); --brd:rgba(255,255,255,.28); --shadow:0 10px 30px rgba(0,0,0,.25);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--noir);color:var(--beige);font-family:Inter,system-ui,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}
-    html{scroll-behavior:smooth}
-
-    /* Structure globale (comme index) */
-    .container{min-height:100svh; display:flex; flex-direction:column}
-    header, footer{position:relative; z-index:10}
-    main{flex:1; display:flex; flex-direction:column}
-
-    /* Blocks et placeholders */
-    .block{padding: clamp(16px, 3vw, 28px)}
-    #map-block{margin: clamp(10px, 2vw, 18px); border-radius:20px}
-    #list-block{margin: clamp(10px, 2vw, 18px)}
-
-    .skeleton{position:relative; overflow:hidden; background:rgba(255,255,255,.06); border:1px solid var(--brd); border-radius:18px}
-    .skeleton::after{
-      content:""; position:absolute; inset:0; transform:translateX(-100%);
-      background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
-      animation: shimmer 1.1s infinite;
-    }
-    @keyframes shimmer{ 100% { transform:translateX(100%); } }
-
-    /* Curseur glass sombre (tu l’avais demandé pour Explorer) */
-    .glass-cursor{
-      position:fixed; left:0; top:0; width:28px; height:28px; border-radius:999px; pointer-events:none; z-index:9999;
-      background: radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 100%);
-      border:1px solid rgba(255,255,255,.18); backdrop-filter: blur(6px);
-      transform: translate(-50%,-50%); transition: width .2s ease, height .2s ease, transform .05s linear;
-      mix-blend-mode: screen;
-    }
-    @media (hover:none){ .glass-cursor{ display:none; } }
-
-    /* Messages d’erreur clean */
-    .error{
-      padding:16px;border:1px solid var(--brd);border-radius:14px;background:rgba(255,255,255,.06)
-    }
-    .error code{background:rgba(0,0,0,.35);padding:.2rem .35rem;border-radius:8px}
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsKZ8Jb+8=" crossorigin=""/>
 </head>
 <body>
-  <div class="container">
+  <div data-include="partials/header.html"></div>
+  <main id="content" tabindex="-1">
+    <div data-include="partials/cursor.html"></div>
+    <section class="section">
+      <h1 class="visually-hidden">Explorer</h1>
+      <div data-include="partials/map.html"></div>
+      <div data-include="partials/explorer-list.html"></div>
+    </section>
+  </main>
+  <div data-include="partials/footer.html"></div>
 
-    <!-- HEADER -->
-    <header id="app-header" class="block skeleton" aria-live="polite">Chargement de l’en-tête…</header>
-
-    <!-- MAIN -->
-    <main id="app-main">
-      <!-- MAP -->
-      <section id="map-block" class="block skeleton" aria-label="Carte">Chargement de la carte…</section>
-      <!-- LISTE LOGEMENTS (partials/explorer-list.html) -->
-      <section id="list-block" class="block skeleton" aria-label="Logements">Chargement des logements…</section>
-    </main>
-
-    <!-- FOOTER -->
-    <footer id="app-footer" class="block skeleton" aria-live="polite">Chargement du pied de page…</footer>
-  </div>
-
-  <!-- Curseur glass sombre -->
-  <div class="glass-cursor" id="glassCursor" aria-hidden="true"></div>
-
-  <noscript>
-    <div class="error" style="margin:16px">
-      <strong>JavaScript requis.</strong> Active-le pour charger les sections depuis <code>partials/</code>.
-    </div>
-  </noscript>
-
+  <script src="assets/js/partials-loader.js"></script>
+  <script src="assets/js/explorer.js"></script>
   <script>
-    // === Utilitaires DOM ===
-    const $  = (s,ctx=document)=>ctx.querySelector(s);
-    const $$ = (s,ctx=document)=>Array.from(ctx.querySelectorAll(s));
-
-    // === Dé-duplication des <link rel="stylesheet"> et <script src> ===
-    const loadedHrefs = new Set();
-    const loadedSrcs  = new Set();
-
-    function ensureStyleInHead(linkEl){
-      const href = linkEl.getAttribute('href');
-      if(!href) return;
-      if(loadedHrefs.has(href)) return; // déjà chargé
-      loadedHrefs.add(href);
-      const l = document.createElement('link');
-      l.rel = linkEl.rel || 'stylesheet';
-      for(const a of linkEl.attributes){ l.setAttribute(a.name, a.value); }
-      document.head.appendChild(l);
-    }
-
-    function ensureInlineStyleInHead(styleEl){
-      const s = document.createElement('style');
-      for(const a of styleEl.attributes){ s.setAttribute(a.name, a.value); }
-      s.textContent = styleEl.textContent;
-      document.head.appendChild(s);
-    }
-
-    async function runScript(scriptEl, mount){
-      const isModule = (scriptEl.type || '').trim() === 'module';
-      const src = scriptEl.getAttribute('src');
-
-      const newScript = document.createElement('script');
-      // Copie attributs
-      for(const a of scriptEl.attributes){ newScript.setAttribute(a.name, a.value); }
-      if(src){
-        if(loadedSrcs.has(src)) return; // déjà chargé
-        loadedSrcs.add(src);
-        // Assure un ordre déterministe si pas async
-        const p = new Promise((resolve, reject)=>{
-          newScript.onload = resolve;
-          newScript.onerror = () => reject(new Error('Erreur chargement script '+src));
-        });
-        mount.appendChild(newScript);
-        await p;
-      }else{
-        // inline (y compris type="module")
-        newScript.textContent = scriptEl.textContent;
-        mount.appendChild(newScript);
-      }
-    }
-
-    // === Charge un partial et exécute ses assets ===
-    async function loadPartial(targetEl, url){
-      try{
-        const res = await fetch(url, {cache:'no-store'});
-        if(!res.ok) throw new Error('HTTP '+res.status+' @ '+url);
-        const html = await res.text();
-
-        // Parse en DOM isolé
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        // 1) Styles: <link rel="stylesheet"> vers <head>, <style> inline vers <head>
-        doc.querySelectorAll('link[rel~="stylesheet"]').forEach(ensureStyleInHead);
-        doc.querySelectorAll('style').forEach(ensureInlineStyleInHead);
-
-        // 2) Contenu visuel sans scripts ni styles (on nettoie pour éviter double-injection)
-        const content = doc.body ? doc.body.innerHTML : html;
-        // On retire les <script> et <style> du fragment avant injection
-        const tmp = document.createElement('div');
-        tmp.innerHTML = content;
-        tmp.querySelectorAll('script, style, link[rel~="stylesheet"]').forEach(n=>n.remove());
-
-        targetEl.innerHTML = tmp.innerHTML;
-        targetEl.classList.remove('skeleton');
-
-        // 3) Scripts (inline & src, y compris type="module") — ordre conservé
-        const scripts = Array.from(doc.querySelectorAll('script'));
-        for(const s of scripts){
-          await runScript(s, targetEl);
-        }
-      }catch(err){
-        console.error(err);
-        targetEl.innerHTML = `
-          <div class="error">
-            <strong>Erreur de chargement</strong><br>
-            <div>Impossible de charger <code>${url}</code></div>
-            <div style="opacity:.8;margin-top:6px">${String(err.message || err)}</div>
-          </div>`;
-        targetEl.classList.remove('skeleton');
-      }
-    }
-
-    // === Curseur glass sombre (inertiel) ===
-    (function glassCursor(){
-      const c = $('#glassCursor');
-      let x=0,y=0,tx=0,ty=0;
-      const lerp=(a,b,t)=>a+(b-a)*t;
-      const raf=()=>{ tx=lerp(tx,x,0.22); ty=lerp(ty,y,0.22); c.style.transform=`translate(${tx}px, ${ty}px) translate(-50%,-50%)`; requestAnimationFrame(raf); };
-      window.addEventListener('mousemove',e=>{x=e.clientX;y=e.clientY;},{passive:true});
-      raf();
-    })();
-
-    // === Gestion des ancres internes avant injection (évite les “sauts”) ===
-    document.addEventListener('click', (e)=>{
-      const a = e.target.closest('a[href^="#"]');
-      if(!a) return;
-      const id = a.getAttribute('href').slice(1);
-      const target = document.getElementById(id);
-      if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
-    }, {capture:true});
-
-    // === Orchestration : ordre identique à l’index (header -> map -> list -> footer) ===
-    (async function boot(){
-      await loadPartial($('#app-header'), 'partials/header.html');
-      await loadPartial($('#map-block'), 'partials/map.html');
-      await loadPartial($('#list-block'), 'partials/explorer-list.html'); // <- ta liste qui lit data/hobivia-global.json
-      await loadPartial($('#app-footer'), 'partials/footer.html');
-    })();
+    includePartials().then(() => {
+      const leafletJS = document.createElement('script');
+      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      leafletJS.integrity = "sha256-o9N1j7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsKZ8Jb+8=";
+      leafletJS.crossOrigin = "";
+      leafletJS.onload = () => Explorer.init({ presetCategory: null });
+      document.body.appendChild(leafletJS);
+    });
   </script>
 </body>
 </html>
