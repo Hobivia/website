@@ -143,3 +143,10 @@ a:hover, a:focus{text-decoration:underline}
 
 /* Small tweaks */
 .accent{color:#fff}
+
+.hero-bg{
+  position:absolute; inset:0;
+  background:url('../images/pexels-alex-andrews-271121-833191.jpg') center/cover no-repeat;
+  filter:brightness(.65);
+}
+
