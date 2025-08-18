@@ -4,37 +4,46 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Surf — Hobivia</title>
-  <meta name="description" content="Lodges Hobivia pour le surf : carte + liste filtrée.">
+  <meta name="description" content="Logements Hobivia pour le surf : carte et liste filtrables.">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap">
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9Nj7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsxKZ8Jb8+8=" crossorigin=""/>
 </head>
-<body>
+<body data-page="category" data-category="surf">
   <div data-include="partials/header.html"></div>
-  <main id="content" tabindex="-1">
-    <div data-include="partials/cursor.html"></div>
-    <section class="section">
-      <header class="category-hero glass">
-        <h1 class="h1">Surf</h1>
-        <p class="muted">Lodges proches des meilleurs spots de vagues.</p>
-      </header>
-      <div data-include="partials/map.html"></div>
-      <div data-include="partials/explorer-list.html"></div>
-    </section>
+  <main id="content" tabindex="-1" class="container section">
+    <div class="category-hero glass">
+      <h1 class="h1">Surf</h1>
+      <p class="muted">Logements à proximité des meilleures vagues.</p>
+    </div>
+
+    <div class="toolbar glass" role="search">
+      <input id="searchInput" type="search" placeholder="Rechercher un nom ou une ville…" aria-label="Rechercher un nom ou une ville">
+      <select id="categorySelect" aria-label="Filtrer par catégorie">
+        <option value="">Toutes les activités</option>
+        <option value="peche">Pêche</option>
+        <option value="randonnee">Randonnée</option>
+        <option value="surf" selected>Surf</option>
+      </select>
+      <button id="resetBtn" class="btn" aria-label="Réinitialiser les filtres">Réinitialiser</button>
+    </div>
+
+    <div data-include="partials/map.html"></div>
+    <div data-include="partials/explorer-list.html"></div>
   </main>
   <div data-include="partials/footer.html"></div>
+  <div data-include="partials/cursor.html"></div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9NljkGStbFQ8a9kaoWzUqv5n0hNhp3voCsxKZ8Jb8+8=" crossorigin=""></script>
   <script src="assets/js/partials-loader.js"></script>
-  <script src="assets/js/explorer.js"></script>
   <script>
-    includePartials().then(() => {
-      const leafletJS = document.createElement('script');
-      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-      leafletJS.onload = () => Explorer.init({ presetCategory: 'surf' });
-      document.body.appendChild(leafletJS);
+    document.addEventListener('partials:ready', async () => {
+      const { initExplorer } = await import('./assets/js/explorer.js');
+      initExplorer({ presetCategory: 'surf' });
     });
+    includePartials();
   </script>
 </body>
 </html>
