@@ -4,36 +4,49 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Explorer — Hobivia</title>
-  <meta name="description" content="Explorer : carte + liste des logements Hobivia. Filtre par activité, recherche, réservation.">
+  <meta name="description" content="Explorez les logements Hobivia : pêche, randonnée, surf. Carte et liste filtrables.">
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap">
   <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsKZ8Jb+8=" crossorigin=""/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9Nj7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsxKZ8Jb8+8=" crossorigin=""/>
 </head>
-<body>
+<body data-page="explorer" data-category="">
+  <!-- Partials -->
   <div data-include="partials/header.html"></div>
-  <main id="content" tabindex="-1">
-    <div data-include="partials/cursor.html"></div>
-    <section class="section">
-      <h1 class="visually-hidden">Explorer</h1>
-      <div data-include="partials/map.html"></div>
-      <div data-include="partials/explorer-list.html"></div>
-    </section>
+  <main id="content" tabindex="-1" class="container section">
+    <h1 class="h1">Explorer</h1>
+
+    <!-- Toolbar -->
+    <div class="toolbar glass" role="search">
+      <input id="searchInput" type="search" placeholder="Rechercher un nom ou une ville…" aria-label="Rechercher un nom ou une ville">
+      <select id="categorySelect" aria-label="Filtrer par catégorie">
+        <option value="">Toutes les activités</option>
+        <option value="peche">Pêche</option>
+        <option value="randonnee">Randonnée</option>
+        <option value="surf">Surf</option>
+      </select>
+      <button id="resetBtn" class="btn" aria-label="Réinitialiser les filtres">Réinitialiser</button>
+    </div>
+
+    <!-- Carte -->
+    <div data-include="partials/map.html"></div>
+
+    <!-- Liste -->
+    <div data-include="partials/explorer-list.html"></div>
   </main>
   <div data-include="partials/footer.html"></div>
+  <div data-include="partials/cursor.html"></div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9NljkGStbFQ8a9kaoWzUqv5n0hNhp3voCsxKZ8Jb8+8=" crossorigin=""></script>
   <script src="assets/js/partials-loader.js"></script>
-  <script src="assets/js/explorer.js"></script>
   <script>
-    includePartials().then(() => {
-      const leafletJS = document.createElement('script');
-      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-      leafletJS.integrity = "sha256-o9N1j7kGStbFQ8a9kaoWzUqv5n0hNhp3voCsKZ8Jb+8=";
-      leafletJS.crossOrigin = "";
-      leafletJS.onload = () => Explorer.init({ presetCategory: null });
-      document.body.appendChild(leafletJS);
+    // Une fois les partials chargés, on démarre la page Explorer
+    document.addEventListener('partials:ready', async () => {
+      const { initExplorer } = await import('./assets/js/explorer.js');
+      initExplorer({ presetCategory: '' });
     });
+    includePartials();
   </script>
 </body>
 </html>
