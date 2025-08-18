@@ -1,85 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hobivia – Logements Pêche</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-:root{
-  --vert-foret:#1B4F46; --beige-sable:#EDE6DA; --terre-cuite:#D07B4E;
-  --glass-bg:rgba(255,255,255,0.12); --glass-brd:rgba(255,255,255,0.35);
-  --shadow:0 8px 30px rgba(0,0,0,0.15);
-}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--beige-sable);color:#222}
-header{backdrop-filter:blur(12px);background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:space-between;padding:12px 20px}
-header img{height:40px}
-header nav a{color:#fff;margin:0 15px;text-decoration:none;font-weight:600}
-.container{max-width:1100px;margin:0 auto;padding:20px}
-.glass{background:var(--glass-bg);border:1px solid var(--glass-brd);backdrop-filter:blur(14px);border-radius:20px;box-shadow:var(--shadow)}
-#map-peche{height:500px;border-radius:20px}
-.listing{display:grid;gap:14px;margin-top:20px}
-.card-logement{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px;background:var(--glass-bg);border:1px solid var(--glass-brd);border-radius:14px}
-.card-logement img{width:120px;height:90px;object-fit:cover;border-radius:8px}
-.badge{background:rgba(255,255,255,.35);padding:4px 8px;border-radius:999px;font-size:.8rem;margin-right:4px}
-.btn{display:inline-block;background:var(--terre-cuite);color:white;padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:600}
-.btn:hover{background:var(--vert-foret)}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Pêche — Hobivia</title>
+  <meta name="description" content="Lodges Hobivia pour la pêche : carte + liste filtrée.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
 <body>
-<header>
-  <img src="images/logo-hobivia.png" alt="Hobivia">
-  <nav>
-    <a href="index.html">Accueil</a>
-    <a href="peche.html">Pêche</a>
-  </nav>
-</header>
+  <div data-include="partials/header.html"></div>
+  <main id="content" tabindex="-1">
+    <div data-include="partials/cursor.html"></div>
+    <section class="section">
+      <header class="category-hero glass">
+        <h1 class="h1">Pêche</h1>
+        <p class="muted">Sélection de lodges adaptés à la pêche, au plus près des spots.</p>
+      </header>
+      <div data-include="partials/map.html"></div>
+      <div data-include="partials/explorer-list.html"></div>
+    </section>
+  </main>
+  <div data-include="partials/footer.html"></div>
 
-<section class="container">
-  <h1>Logements pour pêcheurs</h1>
-  <div id="map-peche" class="glass"></div>
-  <div class="listing" id="listing"></div>
-</section>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-const JSON_URL = "https://raw.githubusercontent.com/Hobivia/website/refs/heads/main/data/hobivia-peche.json";
-let logements = [];
-
-const mapPeche = L.map('map-peche').setView([46.6, 2.2], 5.5);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap'}).addTo(mapPeche);
-
-function renderPeche(){
-  const listing = document.getElementById('listing');
-  listing.innerHTML = "";
-  logements.forEach((l,i)=>{
-    L.marker([l.latitude, l.longitude]).addTo(mapPeche)
-      .bindPopup(`<strong>${l.nom}</strong><br>${l.commune}`);
-    const card = document.createElement('div');
-    card.className = 'card-logement';
-    card.innerHTML = `
-      <img src="${l.photo_url||''}" alt="${l.nom}">
-      <div>
-        <h3><a href="logement.html?id=${i+1}" target="_blank" style="color:inherit;text-decoration:none">${l.nom}</a></h3>
-        <p>${l.commune}</p>
-        <div>
-          <span class="badge">Design ${l.note_design}/5</span>
-          <span class="badge">Localisation ${l.note_localisation}/5</span>
-        </div>
-        <a class="btn" href="logement.html?id=${i+1}" target="_blank">Découvrir</a>
-      </div>
-    `;
-    listing.appendChild(card);
-  });
-}
-
-fetch(JSON_URL)
-  .then(res=>res.json())
-  .then(data=>{
-    logements = data;
-    renderPeche();
-  });
-</script>
+  <script src="assets/js/partials-loader.js"></script>
+  <script src="assets/js/explorer.js"></script>
+  <script>
+    includePartials().then(() => {
+      const leafletJS = document.createElement('script');
+      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      leafletJS.onload = () => Explorer.init({ presetCategory: 'peche' });
+      document.body.appendChild(leafletJS);
+    });
+  </script>
 </body>
 </html>
