@@ -1,76 +1,89 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hobivia – Logement</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --vert-foret:#1B4F46; --beige-sable:#EDE6DA; --terre-cuite:#D07B4E;
-  --glass-bg:rgba(255,255,255,0.12); --glass-brd:rgba(255,255,255,0.35);
-  --shadow:0 12px 40px rgba(0,0,0,.18);
-}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--beige-sable);color:#222}
-.container{max-width:1000px;margin:0 auto;padding:20px}
-.glass{background:var(--glass-bg);border:1px solid var(--glass-brd);backdrop-filter:blur(14px);border-radius:22px;box-shadow:var(--shadow)}
-.hero{position:relative;border-radius:22px;overflow:hidden;min-height:46vh;display:flex;align-items:flex-end;color:white}
-.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero .overlay{position:relative;z-index:1;padding:20px}
-h1,h2{font-family:"Space Grotesk",sans-serif}
-.btn{display:inline-block;background:var(--terre-cuite);color:white;padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600}
-.btn:hover{background:var(--vert-foret)}
-.badge{background:rgba(255,255,255,.35);padding:4px 8px;border-radius:999px;font-size:.8rem;margin-right:4px}
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Logement — Hobivia</title>
+  <meta name="description" content="Fiche logement Hobivia : images, description, prix et réservation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 </head>
 <body>
-<div class="container">
-  <a href="peche.html">← Retour</a>
-</div>
+  <div data-include="partials/header.html"></div>
+  <main id="content" tabindex="-1">
+    <div data-include="partials/cursor.html"></div>
+    <section class="section">
+      <article id="lodging-detail" class="detail glass" aria-live="polite">
+        <header>
+          <h1 id="lodging-title" class="h1">Chargement…</h1>
+          <p id="lodging-location" class="muted"></p>
+        </header>
 
-<section class="hero glass">
-  <img id="hero-img" src="" alt="">
-  <div class="overlay">
-    <h1 id="hero-title">Nom du logement</h1>
-    <p id="hero-sub">Commune • Type</p>
-    <a id="btn-reserver" class="btn" href="#" target="_blank">Réserver</a>
-  </div>
-</section>
+        <div class="slider" id="slider" aria-label="Galerie d’images" tabindex="0"></div>
 
-<div class="container">
-  <div class="glass" style="padding:20px;margin-top:20px">
-    <h2>À propos</h2>
-    <p id="short-desc"></p>
-    <div>
-      <span id="badge-type" class="badge"></span>
-      <span id="badge-commune" class="badge"></span>
-      <span id="badge-notes" class="badge"></span>
-    </div>
-    <h2 style="margin-top:20px">Description</h2>
-    <p id="long-desc"></p>
-  </div>
-</div>
+        <div class="detail-grid">
+          <div>
+            <p id="lodging-description" class="body"></p>
+            <div class="actions">
+              <span id="lodging-price" class="badge price"></span>
+              <a id="lodging-book" class="btn btn-cta" target="_blank" rel="noopener" aria-label="Réserver ce logement">Réserver</a>
+            </div>
+          </div>
+          <div>
+            <div id="detail-map" class="hbv-map" aria-label="Carte du logement"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+  <div data-include="partials/footer.html"></div>
 
-<script>
-const JSON_URL = "data/hobivia-peche.json";
-const id = Number(new URLSearchParams(location.search).get('id'))-1;
-const FALLBACK = "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?q=80&w=1200&auto=format&fit=crop";
+  <script src="assets/js/partials-loader.js"></script>
+  <script>
+    includePartials().then(() => {
+      const leafletJS = document.createElement('script');
+      leafletJS.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      leafletJS.onload = init;
+      document.body.appendChild(leafletJS);
 
-fetch(JSON_URL)
-  .then(res=>res.json())
-  .then(data=>{
-    const l = data[id] || data[0];
-    document.getElementById('hero-img').src = l.photo_url || FALLBACK;
-    document.getElementById('hero-title').textContent = l.nom;
-    document.getElementById('hero-sub').textContent = `${l.commune} • ${l.type || "Hébergement"}`;
-    document.getElementById('btn-reserver').href = l.lien_resa || "#";
-    document.getElementById('short-desc').textContent = l.short_desc || "Description courte à venir...";
-    document.getElementById('badge-type').textContent = l.type || "Type inconnu";
-    document.getElementById('badge-commune').textContent = l.commune || "Commune inconnue";
-    document.getElementById('badge-notes').textContent = `Design ${l.note_design}/5 • Localisation ${l.note_localisation}/5`;
-    document.getElementById('long-desc').textContent = l.long_desc || "Description longue à venir...";
-  })
-  .catch(err=>console.error(err));
-</script>
+      async function init(){
+        const params = new URLSearchParams(location.search);
+        const id = params.get('id') || params.get('slug');
+        const res = await fetch('/.netlify/functions/lodgings' + (id ? ('?id=' + encodeURIComponent(id)) : ''));
+        const data = await res.json();
+        const item = data.items?.[0];
+        if(!item){
+          document.getElementById('lodging-title').textContent = 'Logement introuvable';
+          return;
+        }
+
+        document.title = `${item.title} — Hobivia`;
+        document.getElementById('lodging-title').textContent = item.title;
+        document.getElementById('lodging-location').textContent =
+          [item.location?.city, item.location?.region, item.location?.country].filter(Boolean).join(', ');
+        document.getElementById('lodging-description').textContent = item.description || item.shortDescription || '';
+        document.getElementById('lodging-price').textContent = `À partir de ${new Intl.NumberFormat('fr-FR').format(item.priceFrom)} €`;
+        const book = document.getElementById('lodging-book');
+        book.href = item.bookingUrl || '#';
+
+        const slider = document.getElementById('slider');
+        (item.images || []).forEach(src => {
+          const img = document.createElement('img');
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.alt = `Photo de ${item.title}`;
+          img.src = src;
+          slider.appendChild(img);
+        });
+
+        const map = L.map('detail-map', { scrollWheelZoom:false }).setView([item.location.lat, item.location.lng], 10);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+        L.marker([item.location.lat, item.location.lng]).addTo(map).bindPopup(item.title);
+      }
+    });
+  </script>
 </body>
 </html>
