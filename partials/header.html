@@ -1,31 +1,15 @@
-<!-- HEADER minimaliste avec logo image centré et effet glass -->
-<style>
-  .hbv-header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    backdrop-filter: blur(12px);
-    background: rgba(17,19,21,.55);
-    border-bottom: 1px solid rgba(255,255,255,.18);
-  }
-  .hbv-header .wrap {
-    max-width: 1200px;
-    margin: auto;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .hbv-logo img {
-    height: 42px; /* ajuste la taille selon ton design */
-    display: block;
-  }
-</style>
-
-<header class="hbv-header">
-  <div class="wrap">
-    <a href="index.html" class="hbv-logo">
-      <img src="images/logo-hobivia.png" alt="Hobivia Logo">
+<header class="site-header glass" role="banner">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" aria-label="Aller à l’accueil">
+      <img src="images/logo-hobivia.png" width="120" height="32" alt="Hobivia">
     </a>
+    <nav class="main-nav" aria-label="Navigation principale">
+      <ul>
+        <li><a href="explorer.html">Explorer</a></li>
+        <li><a href="peche.html">Pêche</a></li>
+        <li><a href="randonnee.html">Randonnée</a></li>
+        <li><a href="surf.html">Surf</a></li>
+      </ul>
+    </nav>
   </div>
 </header>
