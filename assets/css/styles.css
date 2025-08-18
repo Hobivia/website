@@ -1,0 +1,145 @@
+/* ========== Design system ========== */
+:root{
+  --hbv-noir:#111315;
+  --hbv-beige:#EDE6DA;
+  --hbv-cta:#D07B4E;
+  --hbv-brd:rgba(255,255,255,.22);
+
+  --radius:20px;
+  --glass-bg:rgba(255,255,255,.08);
+  --glass-bg-strong:rgba(255,255,255,.14);
+  --glass-blur:12px;
+  --shadow:0 12px 40px rgba(0,0,0,.28);
+
+  --container:1200px;
+}
+
+/* ========== Base ========== */
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--hbv-noir); color:var(--hbv-beige);
+  font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.55; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+img{max-width:100%; display:block}
+a{color:var(--hbv-beige); text-decoration:none}
+a:hover, a:focus{text-decoration:underline}
+.visually-hidden{position:absolute!important; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); border:0; padding:0}
+
+/* Focus visible */
+:focus-visible{outline:2px solid var(--hbv-cta); outline-offset:2px}
+
+/* Typography */
+.display{font-family:"Space Grotesk",Inter,sans-serif; font-size:clamp(2.2rem,3.6vw,3.6rem); line-height:1.1; margin:0 0 .6rem}
+.h1{font-family:"Space Grotesk",Inter,sans-serif; font-size:clamp(1.8rem,2.8vw,2.6rem); margin:0 0 .5rem}
+.h2{font-family:"Space Grotesk",Inter,sans-serif; font-size:clamp(1.6rem,2.2vw,2rem); margin:0 0 1rem}
+.h3{font-family:"Space Grotesk",Inter,sans-serif; font-size:1.25rem; margin:.25rem 0}
+.lead{font-size:1.125rem; opacity:.92}
+.muted{opacity:.72}
+.body{font-size:1rem}
+
+/* Layout helpers */
+.container{max-width:var(--container); margin:0 auto; padding:0 20px}
+.section{padding:56px 0}
+.hero{position:relative; padding:108px 0}
+.hero-bg{
+  position:absolute; inset:0;
+  background:url('https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+  filter:brightness(.6);
+}
+.hero .hero-inner{position:relative; max-width:820px; margin:0 auto; padding:32px; text-align:center}
+
+/* Glass */
+.glass{
+  background:var(--glass-bg);
+  backdrop-filter:blur(var(--glass-blur));
+  border:1px solid var(--hbv-brd);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+
+/* Header */
+.site-header{
+  position:sticky; top:0; z-index:1000; margin-top:12px;
+}
+.header-inner{
+  display:flex; gap:16px; align-items:center; justify-content:space-between;
+  padding:10px 16px;
+}
+.logo img{display:block}
+.main-nav ul{display:flex; gap:16px; list-style:none; padding:0; margin:0}
+.main-nav a{padding:8px 10px; border-radius:12px}
+.main-nav a:hover{background:var(--glass-bg-strong)}
+
+/* Footer */
+.site-footer{padding:48px 0 28px; border-top:1px solid rgba(255,255,255,.08); margin-top:64px}
+.footer-inner{display:grid; gap:22px}
+.footer-menu, .social{display:flex; gap:14px; list-style:none; padding:0; margin:0; flex-wrap:wrap}
+.mailto-form{display:flex; gap:10px; flex-wrap:wrap}
+.mailto-form input{padding:10px 12px; border-radius:12px; border:1px solid var(--hbv-brd); background:transparent; color:var(--hbv-beige)}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 14px; border-radius:14px; border:1px solid var(--hbv-brd);
+  background:var(--glass-bg); color:var(--hbv-beige); cursor:pointer;
+}
+.btn:hover{background:var(--glass-bg-strong)}
+.btn-cta{background:var(--hbv-cta); border-color:transparent; color:#fff}
+.btn-cta:hover{filter:brightness(.95)}
+
+/* Cards / grids */
+.cards-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+.card{overflow:hidden; display:flex; flex-direction:column}
+.card-media{aspect-ratio:16/9; background-size:cover; background-position:center}
+.card-body{padding:14px}
+
+/* Badges */
+.badges{display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:0; margin:0}
+.badge{display:inline-flex; align-items:center; padding:8px 12px; border-radius:999px; border:1px solid var(--hbv-brd)}
+.badge.price{font-weight:600}
+
+/* Gallery */
+.gallery{display:grid; grid-template-columns:repeat(4,1fr); gap:8px}
+.gallery img{border-radius:12px}
+
+/* Map */
+.hbv-map{height:420px; border-radius:var(--radius); overflow:hidden; border:1px solid var(--hbv-brd)}
+.leaflet-container{background:#0e1012}
+
+/* Toolbar + grid lodgings */
+.toolbar{display:flex; gap:10px; align-items:center; padding:12px; margin:18px 0}
+.toolbar input[type="search"], .toolbar select{
+  appearance:none; padding:10px 12px; border-radius:12px; border:1px solid var(--hbv-brd);
+  background:transparent; color:var(--hbv-beige); min-width:200px;
+}
+.grid-lodgings{display:grid; gap:16px; grid-template-columns:repeat(2,1fr)}
+@media(min-width:1024px){ .grid-lodgings{grid-template-columns:repeat(3,1fr)} }
+@media(min-width:1440px){ .grid-lodgings{grid-template-columns:repeat(4,1fr)} }
+
+.card-lodging{overflow:hidden; display:flex; flex-direction:column}
+.card-lodging .media{aspect-ratio:4/3; background:#0c0e10; overflow:hidden}
+.card-lodging img{width:100%; height:100%; object-fit:cover}
+.card-lodging .body{padding:12px 12px 14px}
+.card-lodging .meta{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 12px 12px}
+
+/* Reveal + slide-in */
+.reveal-hidden{opacity:0; transform:translateY(12px)}
+.reveal-visible{opacity:1; transform:translateY(0); transition:opacity .6s ease, transform .6s ease}
+[data-side="left"].reveal-hidden{transform:translateX(-16px); opacity:0}
+[data-side="right"].reveal-hidden{transform:translateX(16px); opacity:0}
+
+/* Category header */
+.category-hero{padding:18px 22px; margin:10px 0 16px;}
+
+/* Detail page */
+.detail{padding:18px}
+.detail-grid{display:grid; gap:16px; grid-template-columns:1fr}
+@media(min-width:1024px){ .detail-grid{grid-template-columns:1.2fr .8fr} }
+.slider{display:grid; grid-auto-flow:column; gap:8px; overflow:auto; scroll-snap-type:x mandatory; padding-bottom:8px; margin:10px 0}
+.slider img{scroll-snap-align:center; border-radius:12px; inline-size:clamp(260px,40vw,720px); block-size:auto}
+
+/* Small tweaks */
+.accent{color:#fff}
